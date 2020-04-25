@@ -29,6 +29,7 @@ const app = new Vue({
 		},
 
 		addressValid() {
+      // 0x0123456789012345678901234567890123456789
 			return this.address.match(/^0x[a-fA-F0-9]{40}$/g);
 		},
 
