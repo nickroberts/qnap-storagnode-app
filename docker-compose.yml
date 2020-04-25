@@ -1,22 +1,14 @@
 version: "3"
 
 services:
-  qnap-storagnode-app.web:
-    container_name: qnap-storagnode-app.web
-    image: nginx:latest
+  qnap-storagnode-app.php:
+    container_name: qnap-storagnode-app.php
+    image: php:7.3-apache
     ports:
       - "8080:80"
     volumes:
-      - ./shared/web:/code
-      - ./.docker/nginx/default.conf:/etc/nginx/conf.d/default.conf
-    networks:
-      - qnap-storagnode-app.network
-  qnap-storagnode-app.php:
-    container_name: qnap-storagnode-app.php
-    image: php:7.4-fpm
-    volumes:
-      - ./shared/web:/code
-      - ./.docker/volumes/logs:/var/log
+      - ./shared/web:/var/www/html/
+      - ./volumes/logs:/var/log
     networks:
       - qnap-storagnode-app.network
 
