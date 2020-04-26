@@ -11,6 +11,16 @@ services:
       - ./volumes/logs:/var/log
     networks:
       - qnap-storagnode-app.network
+  qnap-storagnode-app.php-bak:
+    container_name: qnap-storagnode-app.php-bak
+    image: php:7.3-apache
+    ports:
+      - "8010:80"
+    volumes:
+      - ./shared/web.bak:/var/www/html/
+      - ./volumes/logs:/var/log
+    networks:
+      - qnap-storagnode-app.network
 
 networks:
   qnap-storagnode-app.network:
