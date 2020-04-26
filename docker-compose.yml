@@ -5,7 +5,7 @@ services:
     container_name: qnap-storagnode-app.php
     image: php:7.3-apache
     ports:
-      - "8080:80"
+      - "8000:80"
     volumes:
       - ./shared/web:/var/www/html/
       - ./volumes/logs:/var/log

@@ -8,9 +8,9 @@ class Util {
     die();
   }
 
-  public static function getPostData($MY_POST) {
-    if(!empty($MY_POST)) {
-      $post = $MY_POST;
+  public static function getPostData() {
+    if(!empty($_POST)) {
+      $post = $_POST;
     } else {
       $post = json_decode(file_get_contents("php://input"));
     }

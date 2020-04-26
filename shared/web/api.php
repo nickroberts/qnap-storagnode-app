@@ -1,7 +1,11 @@
 <?php
 
-require_once('./classes/config.php');
-require_once('./classes/util.php');
+require_once('./config.php');
+require_once('./logger.php');
+require_once('./scripts.php');
+require_once('./util.php');
+
+// Logger::logEnvironment();
 
 // Base class definition
 
@@ -51,24 +55,53 @@ class APiErrorResponse extends ApiResponse {
 
 // Actual api functionality
 
-
-$data = Util::getPostData(array());
-
-$config = new Config();
-$configFileData = $config->readConfigFile();
-$configFileData->Identity = "nice";
-$newConfigFileData = $config->writeConfigFile($configFileData);
-
-Util::dd($newConfigFileData);
-
-try {
+function handlePostRequest() {
+  $config = new Config();
+  $scripts = new Scripts();
+  $data = Util::getPostData();
   switch ($data->action) {
     case 'config':
-      $response = new ApiSuccessResponse($data);
+      $configFileData = $config->writeConfigFile($data->data);
+      return new ApiSuccessResponse($configFileData);
     break;
+    case 'start':
+      $output = $scripts->start();
+      return new ApiSuccessResponse(['output' => $output]);
+    case 'check':
+      $output = $scripts->check();
+      return new ApiSuccessResponse(['output' => $output]);
+    case 'stop':
+      $output = $scripts->stop();
+      return new ApiSuccessResponse(['output' => $output]);
+    case 'update':
+      $output = $scripts->update();
+      return new ApiSuccessResponse(['output' => $output]);
     case '':
     default:
-      $response = new ApiErrorResponse('Valid action is required', 400);
+      return new ApiErrorResponse('Valid action is required', 400);
+  }
+}
+
+function handleGetRequest() {
+  $config = new Config();
+  switch ($_GET['action']) {
+    case 'config':
+      $configFileData = $config->readConfigFile();
+      return new ApiSuccessResponse($configFileData);
+  }
+  return new ApiErrorResponse('Not found', 404);
+}
+
+try {
+  switch ($_SERVER['REQUEST_METHOD']) {
+    case "POST":
+      $response = handlePostRequest();
+      break;
+    case "GET":
+      $response = handleGetRequest();
+      break;
+    default:
+      $response = new ApiErrorResponse('Not found', 404);
   }
 } catch (Exception $e) {
   $response = new ApiErrorResponse('Server error', 500);
