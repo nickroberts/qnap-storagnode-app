@@ -5,7 +5,7 @@ const { resolve } = require("path");
   try {
     await fs.copy(
       resolve(__dirname, "../dist/"),
-      resolve(__dirname, "../../../shared/web/")
+      resolve(__dirname, "../../../shared/web.new/")
     );
   } catch (e) {
     console.error(e);

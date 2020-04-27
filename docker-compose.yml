@@ -7,7 +7,7 @@ services:
     ports:
       - "8000:80"
     volumes:
-      - ./shared/web:/var/www/html/
+      - ./shared/web.new:/var/www/html/
       - ./volumes/logs:/var/log
     networks:
       - qnap-storagnode-app.network
@@ -17,7 +17,7 @@ services:
     ports:
       - "8010:80"
     volumes:
-      - ./shared/web.bak:/var/www/html/
+      - ./shared/web:/var/www/html/
       - ./volumes/logs:/var/log
     networks:
       - qnap-storagnode-app.network
