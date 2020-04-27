@@ -18,8 +18,7 @@ class Logger {
     );
   }
 
-  public static function tail($lines = 10) {
-    $file = "/var/log/StorJ";
+  public static function tail($lines = 10, $file = "/var/log/StorJ") {
     $handle = fopen($file, "r");
     $linecounter = $lines;
     $pos = -2;

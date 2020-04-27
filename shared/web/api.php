@@ -67,9 +67,6 @@ function handlePostRequest() {
     case 'start':
       $output = $scripts->start();
       return new ApiSuccessResponse(['output' => $output]);
-    case 'check':
-      $output = $scripts->check();
-      return new ApiSuccessResponse(['output' => $output]);
     case 'stop':
       $output = $scripts->stop();
       return new ApiSuccessResponse(['output' => $output]);
@@ -84,10 +81,14 @@ function handlePostRequest() {
 
 function handleGetRequest() {
   $config = new Config();
+  $scripts = new Scripts();
   switch ($_GET['action']) {
     case 'config':
       $configFileData = $config->readConfigFile();
       return new ApiSuccessResponse($configFileData);
+    case 'check':
+      $output = $scripts->check();
+      return new ApiSuccessResponse(['output' => $output]);
   }
   return new ApiErrorResponse('Not found', 404);
 }
