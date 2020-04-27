@@ -1,6 +1,6 @@
 <?php
 
-require_once('./logger.php');
+require_once(__DIR__ . '/logger.php');
 
 class Config {
   private $defaultConfig = array(

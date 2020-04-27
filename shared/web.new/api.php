@@ -1,9 +1,9 @@
 <?php
 
-require_once('./config.php');
-require_once('./logger.php');
-require_once('./scripts.php');
-require_once('./util.php');
+require_once(__DIR__ . '/lib/config.php');
+require_once(__DIR__ . '/lib/logger.php');
+require_once(__DIR__ . '/lib/scripts.php');
+require_once(__DIR__ . '/lib/util.php');
 
 // Logger::logEnvironment();
 
