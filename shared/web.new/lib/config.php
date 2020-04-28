@@ -1,5 +1,6 @@
 <?php
 
+require_once(__DIR__ . '/constants.php');
 require_once(__DIR__ . '/logger.php');
 
 class Config {
@@ -15,7 +16,7 @@ class Config {
   );
 
   public function __construct() {
-    $this->configFile = "config.json";
+    $this->configFile = CONFIG_FILE_NAME;
   }
 
   public function readConfigFile() {

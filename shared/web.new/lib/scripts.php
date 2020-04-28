@@ -1,5 +1,6 @@
 <?php
 
+require_once(__DIR__ . '/constants.php');
 require_once(__DIR__ . '/config.php');
 require_once(__DIR__ . '/util.php');
 
@@ -26,9 +27,15 @@ class Scripts {
 
   public function check() {
     Logger::log("Checking storj server.");
-    $output = shell_exec("/bin/bash {$this->checkScript} 2>&1");
-    LOGGER::log($output);
-    return $output;
+    $containerName = DEFAULT_CONTAINER_NAME;
+    $cmd = "docker ps -a --filter=\"name=^{$containerName}$\" --format \"{{json . }}\"";
+    Logger::log("Running command: ($cmd)");
+    $output = exec($cmd);
+    LOGGER::log("Docker ps output: " . $output);
+    if (!$output) {
+      return new StdClass();
+    }
+    return (object) json_decode($output);
   }
 
   public function start() {

@@ -1,6 +1,7 @@
 <?php
 
 require_once(__DIR__ . '/lib/config.php');
+require_once(__DIR__ . '/lib/constants.php');
 require_once(__DIR__ . '/lib/logger.php');
 require_once(__DIR__ . '/lib/response.php');
 require_once(__DIR__ . '/lib/scripts.php');
@@ -33,12 +34,16 @@ function handlePostRequest() {
 function handleGetRequest() {
   $config = new Config();
   $scripts = new Scripts();
+  $query = Util::getQueryData();
   switch ($_GET['action']) {
     case 'config':
       $configFileData = $config->readConfigFile();
       return new ApiSuccessResponse($configFileData);
     case 'check':
       $output = $scripts->check();
+      return new ApiSuccessResponse(['output' => $output]);
+    case 'tail':
+      $output = Logger::tail($query->lines);
       return new ApiSuccessResponse(['output' => $output]);
   }
   return new ApiErrorResponse('Not found', 404);

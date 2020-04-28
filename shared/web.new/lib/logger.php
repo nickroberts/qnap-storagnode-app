@@ -1,10 +1,13 @@
 <?php
 
+require_once(__DIR__ . '/constants.php');
+
 class Logger {
   public static function log($message) {
-    $file = "/var/log/StorJ";
+    $file = STORJ_LOG_FILE;
     $message = preg_replace('/\n$/', '', $message);
-    $date = `date` ; $timestamp = str_replace("\n", " ", $date);
+    $datetime = new DateTime();
+    $timestamp = $datetime->format(DateTime::ISO8601) . " | ";
     file_put_contents($file, $timestamp . $message . "\n", FILE_APPEND);
   }
 
@@ -18,7 +21,7 @@ class Logger {
     );
   }
 
-  public static function tail($lines = 10, $file = "/var/log/StorJ") {
+  public static function tail($lines = 10, $file = STORJ_LOG_FILE) {
     $handle = fopen($file, "r");
     $linecounter = $lines;
     $pos = -2;
@@ -42,6 +45,6 @@ class Logger {
         if ($beginning) break;
     }
     fclose ($handle);
-    return join(array_reverse($text));
+    return join($text);
   }
 }

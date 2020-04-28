@@ -19,4 +19,11 @@ class Util {
     }
     return (object) [];
   }
+
+  public static function getQueryData() {
+    if(!empty($_GET)) {
+      return (object) json_decode(json_encode($_GET), true);
+    }
+    return (object) [];
+  }
 }

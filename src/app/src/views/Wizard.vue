@@ -24,7 +24,7 @@
         <v-tab-item key="1" class="tab-item">
           <div>
             <v-icon class="back-icon" x-large v-on:click="goBack()"
-              >mdi-arrow-left</v-icon
+              >arrow_back</v-icon
             >
             <v-img
               alt="Storj Logo"
@@ -259,7 +259,7 @@
                     >
 
                     <div class="info-block">
-                      <v-icon color="primary" large>mdi-information</v-icon>
+                      <v-icon color="primary" large>info</v-icon>
                       <p>
                         Creating identity can take several hours or even days,
                         depending on your machines processing power.
@@ -442,21 +442,6 @@ export default {
 .logo {
   height: 75px;
   margin-bottom: 80px;
-}
-
-.v-btn {
-  font-weight: bold !important;
-  letter-spacing: 0 !important;
-  min-width: 200px !important;
-  text-indent: 0 !important;
-  text-decoration-color: none !important;
-  text-decoration-style: none !important;
-  text-decoration-line: none !important;
-  -webkit-font-smoothing: none !important;
-  &.v-size--large {
-    font-size: 1rem !important;
-    height: 48px !important;
-  }
 }
 
 h1 {

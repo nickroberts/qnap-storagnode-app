@@ -18,7 +18,7 @@
       <v-list dense>
         <v-list-item link router-link to="/">
           <v-list-item-action>
-            <v-icon>mdi-view-dashboard</v-icon>
+            <v-icon>dashboard</v-icon>
           </v-list-item-action>
           <v-list-item-content>
             <v-list-item-title>Dashboard</v-list-item-title>
@@ -26,7 +26,7 @@
         </v-list-item>
         <v-list-item link router-link to="/config">
           <v-list-item-action>
-            <v-icon>mdi-cog</v-icon>
+            <v-icon>settings</v-icon>
           </v-list-item-action>
           <v-list-item-content>
             <v-list-item-title>
@@ -36,7 +36,7 @@
         </v-list-item>
         <v-list-item link router-link to="/wizard">
           <v-list-item-action>
-            <v-icon>mdi-restart</v-icon>
+            <v-icon>build</v-icon>
           </v-list-item-action>
           <v-list-item-content>
             <v-list-item-title>Wizard</v-list-item-title>
@@ -49,7 +49,7 @@
       <v-list dense>
         <v-list-item link href="#">
           <v-list-item-action>
-            <v-icon>mdi-file-document</v-icon>
+            <v-icon>description</v-icon>
           </v-list-item-action>
           <v-list-item-content>
             <v-list-item-title>Documentation</v-list-item-title>
@@ -134,6 +134,19 @@ export default {
 .v-btn {
   font-weight: 700 !important;
   text-transform: none !important;
+  letter-spacing: 0 !important;
+  text-indent: 0 !important;
+  text-decoration-color: none !important;
+  text-decoration-style: none !important;
+  text-decoration-line: none !important;
+  -webkit-font-smoothing: none !important;
+  &.v-size--large {
+    font-size: 1rem !important;
+    height: 48px !important;
+  }
+  &:not(.v-btn--icon) {
+    min-width: 200px !important;
+  }
 }
 
 .v-input__slot {
