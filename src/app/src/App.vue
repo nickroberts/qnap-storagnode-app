@@ -12,7 +12,7 @@
           width="100"
         />
         <div class="ml-4">|</div>
-        <div class="ml-4">QNAP</div>
+        <div class="ml-4">Storage Node</div>
       </div>
 
       <v-list dense>

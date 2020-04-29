@@ -33,14 +33,25 @@ class Scripts {
     $output = exec($cmd);
     LOGGER::log("Docker ps output: " . $output);
     $statsHost = 'http://' . $_SERVER['SERVER_NAME'] . ':14002';
+
+    // TODO: Parse and get the version.
+    // Release build
+    // Version: v1.1.1
+    // Build timestamp: 01 Apr 20 15:19 UTC
+    // Git commit: 17923e6fd199e2b33a6ef5853a76f9be68322e79
+    // $versionCmd = "docker exec `docker ps -l -q -f 'name={$containerName}'` sh -c \"/app/storagenode version\"";
+    // $versionOutout = exec($cmd);
+
     if (!$output) {
       return json_decode(json_encode([
         'containerName' => $containerName,
         'statsHost' => $statsHost
+        // 'versionOutout' => $versionOutout
       ]));
     }
     $output->containerName = $containerName;
     $output->statsHost = $statsHost;
+    // $output->versionOutout = $versionOutout;
     return (object) json_decode($output);
   }
 

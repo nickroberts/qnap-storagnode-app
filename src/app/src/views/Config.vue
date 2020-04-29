@@ -9,8 +9,15 @@
     <v-row>
       <v-col cols="12" md="6">
         <v-card outlined tile class="fill-height">
+          <v-progress-circular
+            v-if="!status"
+            indeterminate
+            color="primary"
+            size="24"
+          ></v-progress-circular>
           <div
             class="d-flex justify-start justify-md-space-between align-start pa-4 flex-column flex-md-row fill-height"
+            v-if="status"
           >
             <div>
               <div class="title">Node Status</div>
@@ -25,16 +32,15 @@
                   >Online</span
                 >
               </div>
-              <v-progress-circular
-                v-if="!status"
-                indeterminate
-                color="primary"
-                size="24"
-              ></v-progress-circular>
             </div>
-            <div v-if="status" class="mt-4 mt-md-0 align-self-center">
-              <v-btn v-if="!status.Status" color="primary" large>Start</v-btn>
-              <v-btn v-if="status.Status" color="red" dark large>Stop</v-btn>
+            <div v-if="!status.Status" class="mt-4 mt-md-0 align-self-center">
+              <v-btn class="d-block" color="primary" large>Restart</v-btn>
+              <v-btn class="d-block mt-2" color="red" outline dark large
+                >Stop</v-btn
+              >
+            </div>
+            <div v-if="status.Status" class="mt-4 mt-md-0 align-self-center">
+              <v-btn color="primary" large>Start</v-btn>
             </div>
           </div>
         </v-card>
@@ -69,7 +75,7 @@
               Latest Log
             </div>
             <v-spacer></v-spacer>
-            <v-btn color="primary" class="mb-2" right @click="getLog()" icon>
+            <v-btn class="mb-2" right @click="getLog()" icon>
               <v-icon :class="{ spin: !latestLog }">cached</v-icon>
             </v-btn>
           </div>

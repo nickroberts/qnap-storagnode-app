@@ -33,7 +33,7 @@
 </template>
 
 <script>
-import { storageAllocationRules } from "@/lib/validationRules";
+import { storageDirectoryRules } from "@/lib/validationRules";
 
 export default {
   name: "StorageDirectoryDialog",
@@ -43,7 +43,7 @@ export default {
       open: false,
       value: this.data.storageDirectory,
       valid: false,
-      rules: storageAllocationRules,
+      rules: storageDirectoryRules,
     };
   },
   props: {

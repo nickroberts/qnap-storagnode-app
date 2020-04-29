@@ -37,7 +37,10 @@
             </div>
           </v-card-text>
           <v-card-actions>
-            <v-btn color="primary" @click="validate()">Generate</v-btn>
+            <v-btn color="primary" @click="validate()">Save</v-btn>
+            <v-btn color="secondary" @click="generate()"
+              >Generate Identity</v-btn
+            >
             <v-btn color="primary" outlined @click="cancel()">Cancel</v-btn>
             <v-btn color="primary" text outlined @click="reset()">Reset</v-btn>
           </v-card-actions>
@@ -82,6 +85,9 @@ export default {
     },
   },
   methods: {
+    generate() {
+      console.log("TODO!");
+    },
     validate() {
       this.$refs.form.validate();
       if (this.valid) {
