@@ -1,18 +1,23 @@
 <template>
-  <v-card outlined>
-    <v-container>
-      <v-row class="fill-height">
-        <v-col cols="auto">
-          <v-icon color="primary" size="96">{{ $props.icon }}</v-icon>
-        </v-col>
+  <v-card class="fill-height pa-4" outlined>
+    <v-container class="fill-height">
+      <div class="d-flex fill-height align-center">
+        <v-icon class="mr-4" color="primary" size="64">{{
+          $props.icon
+        }}</v-icon>
 
-        <v-col>
-          <v-card-title>
+        <div class="d-flex flex-column fill-height">
+          <v-card-title class="mt-0 pt-0">
             <div class="d-flex">
               <div>
                 {{ $props.title }}
               </div>
-              <v-tooltip class="info-icon" v-if="$props.info" bottom>
+              <v-tooltip
+                class="info-icon"
+                v-if="$props.info"
+                bottom
+                max-width="500"
+              >
                 <template v-slot:activator="{ on }">
                   <v-btn icon v-on="on">
                     <v-icon>info</v-icon>
@@ -25,9 +30,11 @@
 
           <v-card-text>{{ $props.value }}</v-card-text>
 
+          <v-spacer></v-spacer>
+
           <slot />
-        </v-col>
-      </v-row>
+        </div>
+      </div>
     </v-container>
   </v-card>
 </template>

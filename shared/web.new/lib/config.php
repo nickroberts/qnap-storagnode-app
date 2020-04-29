@@ -34,17 +34,17 @@ class Config {
 
   public function writeConfigFile($data) {
     $dataObject = (object) $data;
-    $configData = $properties = array(
-	    'AuthKey' => $dataObject->authKey,
-	    'Identity' => $dataObject->identity,
-	    'Port' => $dataObject->port,
-	    'Wallet' => $dataObject->wallet,
-	    'Allocation' => $dataObject->allocation,
-	    'Bandwidth' => $dataObject->bandwidth,
-	    'Email' => $dataObject->email,
-	    'Directory' => $dataObject->directory
-    );
-    $this->save($configData);
+    // $configData = $properties = array(
+	  //   'AuthKey' => $dataObject->authKey,
+	  //   'Identity' => $dataObject->identity,
+	  //   'Port' => $dataObject->port,
+	  //   'Wallet' => $dataObject->wallet,
+	  //   'Allocation' => $dataObject->allocation,
+	  //   'Bandwidth' => $dataObject->bandwidth,
+	  //   'Email' => $dataObject->email,
+	  //   'Directory' => $dataObject->directory
+    // );
+    $this->save($dataObject);
     return $this->readConfigFile();
   }
 

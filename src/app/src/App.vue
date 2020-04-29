@@ -167,4 +167,36 @@ export default {
   display: flex !important;
   flex-flow: column nowrap !important;
 }
+
+.v-dialog {
+  .v-card__actions {
+    padding: 12px 24px;
+    .v-btn {
+      min-width: 100px !important;
+    }
+  }
+}
+
+.form-control {
+  margin: 0 auto 1rem;
+  text-align: left;
+  label {
+    display: block;
+    margin-bottom: 0.5rem;
+  }
+  .v-input {
+    input {
+      background: white;
+    }
+  }
+}
+
+.config-modal {
+  .v-btn {
+    min-width: 100px !important;
+  }
+  .config-modal-activator {
+    padding: 0 16px;
+  }
+}
 </style>

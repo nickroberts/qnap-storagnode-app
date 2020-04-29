@@ -43,15 +43,15 @@
                 <div class="stepper-content-inner">
                   <h1>Connect your Email Address</h1>
                   <p>
-                    In order to recieve and hold your STORJ token payouts, you
-                    need an ERC-20 compatible wallet address
+                    Join thousands of Node Operators around the world by getting
+                    Node status updates from Storj Labs.
                   </p>
 
                   <div class="form-control">
                     <label>Email Address</label>
                     <v-text-field
-                      v-model="formData.email"
-                      :rules="emailRules"
+                      v-model="formData.emailAddress"
+                      :rules="emailAddressRules"
                       label="Email Address"
                       placeholder="mail@default.com"
                       required
@@ -86,8 +86,8 @@
                   <div class="form-control">
                     <label>ETH Wallet Address</label>
                     <v-text-field
-                      v-model="formData.address"
-                      :rules="addressRules"
+                      v-model="formData.walletAddress"
+                      :rules="walletAddressRules"
                       label="ETH Wallet Address"
                       placeholder="Enter ETH Wallet Address"
                       required
@@ -114,7 +114,8 @@
                   <div class="form-control">
                     <label>Storage Allocation</label>
                     <v-text-field
-                      v-model="formData.storage"
+                      v-model="formData.storageAllocation"
+                      :rules="storageAllocationRules"
                       label="Storage Allocation"
                       placeholder="1000"
                       required
@@ -141,7 +142,8 @@
                   <div class="form-control">
                     <label>Storage Directory</label>
                     <v-text-field
-                      v-model="formData.directory"
+                      v-model="formData.storageDirectory"
+                      :rules="storageDirectoryRules"
                       label="Storage Directory"
                       placeholder="1000"
                       required
@@ -169,7 +171,8 @@
                   <div class="form-control">
                     <label>Host Address</label>
                     <v-text-field
-                      v-model="formData.host"
+                      v-model="formData.hostname"
+                      :rules="hostnameRules"
                       label="Host Address"
                       placeholder="hostname.ddns.net:28967"
                       required
@@ -202,7 +205,8 @@
                     <div class="form-control">
                       <label>Identity Path</label>
                       <v-text-field
-                        v-model="formData.identity"
+                        v-model="formData.identityPath"
+                        :rules="identityPathRules"
                         label="Identity Path"
                         placeholder="/path/to/identity"
                         required
@@ -241,7 +245,8 @@
                     <div class="form-control">
                       <label>Authorization Token</label>
                       <v-text-field
-                        v-model="formData.authToken"
+                        v-model="formData.authorizationToken"
+                        :rules="authorizationTokenRules"
                         label="Authorization Token"
                         placeholder="user@email.com;XXXXX"
                         required
@@ -339,6 +344,16 @@
 
 <script>
 import axios from "axios";
+import {
+  emailAddressRules,
+  hostnameRules,
+  identityPathRules,
+  authorizationTokenRules,
+  storageAllocationRules,
+  storageDirectoryRules,
+  walletAddressRules,
+} from "@/lib/validationRules";
+
 export default {
   name: "Wizard",
   components: {},
@@ -362,14 +377,13 @@ export default {
       { title: "Port Forwarding" },
       { title: "Identity" },
     ],
-    emailRules: [
-      (v) => !!v || "E-mail is required",
-      (v) => /.+@.+/.test(v) || "E-mail must be valid",
-    ],
-    addressRules: [
-      // 0x0123456789012345678901234567890123456789
-      (v) => /^0x[a-fA-F0-9]{40}$/g.test(v) || "Address must be valid",
-    ],
+    emailAddressRules,
+    hostnameRules,
+    identityPathRules,
+    authorizationTokenRules,
+    storageAllocationRules,
+    storageDirectoryRules,
+    walletAddressRules,
     configData: null,
     loading: false,
     error: null,
@@ -386,20 +400,22 @@ export default {
         .then(({ data }) => {
           this.configData = data.data;
           const {
-            Email,
-            Wallet,
-            Allocation,
-            Directory,
-            Port,
-            Identity,
+            emailAddress,
+            walletAddress,
+            storageAllocation,
+            storageDirectory,
+            hostname,
+            identityPath,
+            authorizationToken,
           } = data.data;
           this.formData = {
-            email: Email,
-            address: Wallet,
-            storage: Allocation,
-            directory: Directory,
-            host: Port,
-            identity: Identity,
+            emailAddress,
+            walletAddress,
+            storageAllocation,
+            storageDirectory,
+            hostname,
+            identityPath,
+            authorizationToken,
           };
         })
         .catch((reason) => {

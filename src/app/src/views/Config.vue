@@ -8,13 +8,16 @@
 
     <v-row>
       <v-col cols="12" md="6">
-        <v-card outlined tile>
-          <div class="d-flex justify-space-between align-center pa-4">
+        <v-card outlined tile class="fill-height">
+          <div
+            class="d-flex justify-start justify-md-space-between align-start pa-4 flex-column flex-md-row fill-height"
+          >
             <div>
-              <div class="title">
-                Node Status
+              <div class="title">Node Status</div>
+              <div class="subtitle">
+                Container name:&nbsp;<strong>{{ status.containerName }}</strong>
               </div>
-              <div v-if="status" class="subtitle">
+              <div class="subtitle">
                 <span v-if="!status.Status" class="red--text font-weight-bold"
                   >Offline</span
                 >
@@ -29,7 +32,7 @@
                 size="24"
               ></v-progress-circular>
             </div>
-            <div v-if="status">
+            <div v-if="status" class="mt-4 mt-md-0 align-self-center">
               <v-btn v-if="!status.Status" color="primary" large>Start</v-btn>
               <v-btn v-if="status.Status" color="red" dark large>Stop</v-btn>
             </div>
@@ -38,8 +41,10 @@
       </v-col>
 
       <v-col cols="12" md="6">
-        <v-card outlined tile>
-          <div class="d-flex justify-space-between align-center pa-4">
+        <v-card outlined tile class="fill-height">
+          <div
+            class="d-flex justify-start justify-md-space-between align-start pa-4 flex-column flex-md-row fill-height"
+          >
             <div>
               <div class="title">
                 Version
@@ -48,7 +53,7 @@
                 <span>Latest version installed</span>
               </div>
             </div>
-            <div>
+            <div class="mt-4 mt-md-0 align-self-center">
               <v-btn color="primary" large>Update Node</v-btn>
             </div>
           </div>
@@ -59,8 +64,14 @@
     <v-row>
       <v-col cols="12">
         <v-card class="pa-4" outlined tile>
-          <div class="title mb-2">
-            Latest Log
+          <div class="d-flex">
+            <div class="title mb-2">
+              Latest Log
+            </div>
+            <v-spacer></v-spacer>
+            <v-btn color="primary" class="mb-2" right @click="getLog()" icon>
+              <v-icon :class="{ spin: !latestLog }">cached</v-icon>
+            </v-btn>
           </div>
           <div class="grey lighten-3 pa-4" v-if="latestLog">
             <pre>{{ latestLog }}</pre>
@@ -92,62 +103,62 @@
         <ConfigCard
           icon="fingerprint"
           title="Identity"
-          :value="configData.Identity"
-          info="some info about this"
+          :value="configData.identityPath"
+          info="Every node is required to have a unique identifier on the network. If you haven't already, get an authorization token. Please get the authorization token and create identity on host machine other than NAS"
         >
-          <v-btn color="primary" outlined>Edit</v-btn>
+          <IdentityPathDialog :data="configData" :on-save="save" />
         </ConfigCard>
       </v-col>
       <v-col cols="12" md="6">
         <ConfigCard
-          icon="storage"
+          icon="settings_ethernet"
           title="Port Forwarding"
-          :value="configData.Port"
-          info="some info about this"
+          :value="configData.hostname"
+          info="How a storage node communicates with others on the Storj network, even though it is behind a router. You need a dynamic DNS service to ensure your storage node is connected"
         >
-          <v-btn color="primary" outlined>Edit</v-btn>
+          <HostnameDialog :data="configData" :on-save="save" />
         </ConfigCard>
       </v-col>
 
       <v-col cols="12" md="6">
         <ConfigCard
-          icon="fingerprint"
+          icon="dns"
           title="Ethereum Wallet Address"
-          :value="configData.Wallet"
-          info="some info about this"
+          :value="configData.walletAddress"
+          info="In order to recieve and hold your STORJ token payouts, you need an ERC-20 compatible wallet address"
         >
-          <v-btn color="primary" outlined>Edit</v-btn>
+          <WalletAddressDialog :data="configData" :on-save="save" />
         </ConfigCard>
       </v-col>
       <v-col cols="12" md="6">
         <ConfigCard
-          icon="storage"
+          icon="bar_chart"
           title="Storage Allocation"
-          :value="configData.Allocation"
-          info="some info about this"
+          :value="`${configData.storageAllocation} GB`"
+          info="How much disk space you want to allocate to the Storj network"
         >
-          <v-btn color="primary" outlined>Edit</v-btn>
+          <StorageAllocationDialog :data="configData" :on-save="save" />
         </ConfigCard>
       </v-col>
 
       <v-col cols="12" md="6">
         <ConfigCard
-          icon="fingerprint"
+          icon="email"
           title="Email Address"
-          :value="configData.Email"
-          info="some info about this"
+          :value="configData.emailAddress"
+          info="Join thousands of Node Operators around the world by getting Node status updates from Storj Labs."
         >
-          <v-btn color="primary" outlined>Edit</v-btn>
+          <EmailAddressDialog :data="configData" :on-save="save" />
         </ConfigCard>
       </v-col>
       <v-col cols="12" md="6">
         <ConfigCard
           icon="storage"
           title="Storage Directory"
-          :value="configData.Directory"
-          info="some info about this"
+          :value="configData.storageDirectory"
+          info="The local directory where you want files to be stored on your hard drive for the network"
         >
-          <v-btn color="primary" outlined>Edit</v-btn>
+          <StorageDirectoryDialog :data="configData" :on-save="save" />
         </ConfigCard>
       </v-col>
     </v-row>
@@ -157,16 +168,29 @@
 <script>
 import axios from "axios";
 import ConfigCard from "@/components/ConfigCard.vue";
+import StorageAllocationDialog from "@/components/config/StorageAllocationDialog.vue";
+import EmailAddressDialog from "@/components/config/EmailAddressDialog.vue";
+import IdentityPathDialog from "@/components/config/IdentityPathDialog.vue";
+import HostnameDialog from "@/components/config/HostnameDialog.vue";
+import StorageDirectoryDialog from "@/components/config/StorageDirectoryDialog.vue";
+import WalletAddressDialog from "@/components/config/WalletAddressDialog.vue";
 
 export default {
   name: "Config",
   components: {
     ConfigCard,
+    StorageAllocationDialog,
+    EmailAddressDialog,
+    IdentityPathDialog,
+    HostnameDialog,
+    StorageDirectoryDialog,
+    WalletAddressDialog,
   },
   data: () => ({
     configData: null,
     latestLog: null,
     status: null,
+    dialog: false,
   }),
   created() {
     this.init();
@@ -176,33 +200,46 @@ export default {
       axios
         .get("/api.php", { params: { action: "config" } })
         .then(({ data }) => {
-          console.log("config", data);
           this.configData = data.data;
         });
-      axios
-        .get("/api.php", { params: { action: "tail", lines: 50 } })
-        .then(({ data }) => {
-          console.log("tail", data);
-          this.latestLog = data.data.output;
-        });
+      this.getLog();
       axios
         .get("/api.php", { params: { action: "check" } })
         .then(({ data }) => {
-          console.log("check", data);
           this.status = data.data.output;
         });
+    },
+    getLog() {
+      this.latestLog = null;
+      axios
+        .get("/api.php", { params: { action: "tail", lines: 50 } })
+        .then(({ data }) => {
+          this.latestLog = data.data.output;
+        });
+    },
+    save(data) {
+      axios.post("/api.php", { action: "config", data }).then(({ data }) => {
+        this.configData = data.data;
+      });
     },
   },
 };
 </script>
 
 <style lang="scss" scoped>
-.v-btn {
-  min-width: 160px !important;
-}
-
 pre {
   height: 200px;
   overflow: scroll;
+}
+@keyframes rotation {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(359deg);
+  }
+}
+.spin {
+  animation: rotation 2s infinite linear;
 }
 </style>

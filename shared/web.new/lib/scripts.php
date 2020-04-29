@@ -27,14 +27,20 @@ class Scripts {
 
   public function check() {
     Logger::log("Checking storj server.");
-    $containerName = DEFAULT_CONTAINER_NAME;
+    $containerName = $this->configFileData->containerName ? $this->configFileData->containerName : DEFAULT_CONTAINER_NAME;
     $cmd = "docker ps -a --filter=\"name=^{$containerName}$\" --format \"{{json . }}\"";
     Logger::log("Running command: ($cmd)");
     $output = exec($cmd);
     LOGGER::log("Docker ps output: " . $output);
+    $statsHost = 'http://' . $_SERVER['SERVER_NAME'] . ':14002';
     if (!$output) {
-      return new StdClass();
+      return json_decode(json_encode([
+        'containerName' => $containerName,
+        'statsHost' => $statsHost
+      ]));
     }
+    $output->containerName = $containerName;
+    $output->statsHost = $statsHost;
     return (object) json_decode($output);
   }
 
