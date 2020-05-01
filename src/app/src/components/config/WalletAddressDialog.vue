@@ -18,6 +18,7 @@
                 single-line
                 v-model="value"
                 :rules="rules"
+                placeholder="0x0000000000000000000000000000000000000000"
               ></v-text-field>
             </div>
           </v-card-text>
@@ -33,22 +34,22 @@
 </template>
 
 <script>
-import { walletAddressRules } from "@/lib/validationRules";
+import { walletAddressRules } from '@/lib/validationRules';
 
 export default {
-  name: "WalletAddressDialog",
+  name: 'WalletAddressDialog',
   components: {},
   data() {
     return {
       open: false,
       value: this.data.walletAddress,
       valid: false,
-      rules: walletAddressRules,
+      rules: walletAddressRules
     };
   },
   props: {
     data: Object,
-    onSave: Function,
+    onSave: Function
   },
   watch: {
     open: {
@@ -57,8 +58,8 @@ export default {
           this.$refs.form.resetValidation();
           this.value = this.data.emailAddress;
         }
-      },
-    },
+      }
+    }
   },
   methods: {
     validate() {
@@ -77,7 +78,7 @@ export default {
     },
     cancel() {
       this.open = false;
-    },
-  },
+    }
+  }
 };
 </script>

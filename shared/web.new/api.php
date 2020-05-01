@@ -46,6 +46,7 @@ function handleGetRequest() {
       $output = $scripts->check();
       return new ApiSuccessResponse($output);
     case 'tail':
+    case 'tailIdentity':
       $output = Logger::tail($query->lines);
       return new ApiSuccessResponse($output);
   }

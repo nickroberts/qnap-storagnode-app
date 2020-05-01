@@ -20,6 +20,7 @@
                 :rules="rules"
                 type="number"
                 suffix="GB"
+                placeholder="1000"
               ></v-text-field>
             </div>
           </v-card-text>
@@ -35,22 +36,22 @@
 </template>
 
 <script>
-import { storageAllocationRules } from "@/lib/validationRules";
+import { storageAllocationRules } from '@/lib/validationRules';
 
 export default {
-  name: "StorageAllocationDialog",
+  name: 'StorageAllocationDialog',
   components: {},
   data() {
     return {
       open: false,
       value: this.data.storageAllocation,
       valid: false,
-      rules: storageAllocationRules,
+      rules: storageAllocationRules
     };
   },
   props: {
     data: Object,
-    onSave: Function,
+    onSave: Function
   },
   watch: {
     open: {
@@ -59,8 +60,8 @@ export default {
           this.$refs.form.resetValidation();
           this.value = this.data.emailAddress;
         }
-      },
-    },
+      }
+    }
   },
   methods: {
     validate() {
@@ -79,7 +80,7 @@ export default {
     },
     cancel() {
       this.open = false;
-    },
-  },
+    }
+  }
 };
 </script>

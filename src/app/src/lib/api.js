@@ -31,6 +31,11 @@ export const saveConfig = async configData => {
   return data.data;
 };
 
+export const tailIdentityLog = async (lines = 50) => {
+  const { data } = await axios.get('/api.php', { params: { action: 'tailIdentity', lines } });
+  return data.data;
+};
+
 export const tailLog = async (lines = 50) => {
   const { data } = await axios.get('/api.php', { params: { action: 'tail', lines } });
   return data.data;

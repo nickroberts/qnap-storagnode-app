@@ -21,7 +21,8 @@
                 outlined
                 single-line
                 v-model="authorizationToken"
-                :rules="identityPathRules"
+                :rules="authorizationTokenRules"
+                placeholder="Authorization Token"
               ></v-text-field>
             </div>
 
@@ -32,15 +33,14 @@
                 outlined
                 single-line
                 v-model="identityPath"
-                :rules="authorizationTokenRules"
+                :rules="identityPathRules"
+                placeholder="/path/to/identity"
               ></v-text-field>
             </div>
           </v-card-text>
           <v-card-actions>
             <v-btn color="primary" @click="validate()">Save</v-btn>
-            <v-btn color="secondary" @click="generate()"
-              >Generate Identity</v-btn
-            >
+            <v-btn color="secondary" @click="generate()">Generate Identity</v-btn>
             <v-btn color="primary" outlined @click="cancel()">Cancel</v-btn>
             <v-btn color="primary" text outlined @click="reset()">Reset</v-btn>
           </v-card-actions>
@@ -51,13 +51,10 @@
 </template>
 
 <script>
-import {
-  identityPathRules,
-  authorizationTokenRules,
-} from "@/lib/validationRules";
+import { identityPathRules, authorizationTokenRules } from '@/lib/validationRules';
 
 export default {
-  name: "IdentityPathDialog",
+  name: 'IdentityPathDialog',
   components: {},
   data() {
     return {
@@ -66,12 +63,12 @@ export default {
       identityPath: this.data.identityPath,
       valid: false,
       identityPathRules: identityPathRules,
-      authorizationTokenRules: authorizationTokenRules,
+      authorizationTokenRules: authorizationTokenRules
     };
   },
   props: {
     data: Object,
-    onSave: Function,
+    onSave: Function
   },
   watch: {
     open: {
@@ -81,12 +78,12 @@ export default {
           this.authorizationToken = this.data.authorizationToken;
           this.identityPath = this.data.identityPath;
         }
-      },
-    },
+      }
+    }
   },
   methods: {
     generate() {
-      console.log("TODO!");
+      console.log('TODO!');
     },
     validate() {
       this.$refs.form.validate();
@@ -103,13 +100,13 @@ export default {
       this.onSave({
         ...this.data,
         authorizationToken: this.authorizationToken,
-        identityPath: this.identityPath,
+        identityPath: this.identityPath
       });
       this.open = false;
     },
     cancel() {
       this.open = false;
-    },
-  },
+    }
+  }
 };
 </script>

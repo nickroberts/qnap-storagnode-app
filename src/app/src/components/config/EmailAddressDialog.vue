@@ -18,6 +18,7 @@
                 single-line
                 v-model="value"
                 :rules="rules"
+                placeholder="mail@default.com"
               ></v-text-field>
             </div>
           </v-card-text>
@@ -33,22 +34,22 @@
 </template>
 
 <script>
-import { emailAddressRules } from "@/lib/validationRules";
+import { emailAddressRules } from '@/lib/validationRules';
 
 export default {
-  name: "EmailAddressDialog",
+  name: 'EmailAddressDialog',
   components: {},
   data() {
     return {
       open: false,
       value: this.data.emailAddress,
       valid: false,
-      rules: emailAddressRules,
+      rules: emailAddressRules
     };
   },
   props: {
     data: Object,
-    onSave: Function,
+    onSave: Function
   },
   watch: {
     open: {
@@ -57,8 +58,8 @@ export default {
           this.$refs.form.resetValidation();
           this.value = this.data.emailAddress;
         }
-      },
-    },
+      }
+    }
   },
   methods: {
     validate() {
@@ -77,7 +78,7 @@ export default {
     },
     cancel() {
       this.open = false;
-    },
-  },
+    }
+  }
 };
 </script>
