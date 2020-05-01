@@ -13,9 +13,23 @@ const app = new Vue({
 		directory: '',
 		host: '',
 		identity: '',
+		authkey: '',
 
 	},
+
+	created () {
+        this.email = document.querySelector(".email").value
+        this.address = document.querySelector(".address").value
+        this.storage = document.querySelector(".storage").value
+        this.directory = document.querySelector(".directory").value
+        this.host = document.querySelector(".host").value
+        this.identity = document.querySelector(".identity").value
+
+        this.authkey = document.querySelector("#authkey").value
+    },
+
 	computed: {
+
 		stepClass() {
 			const obj = {};
 
@@ -56,26 +70,27 @@ const app = new Vue({
 			}
 
 			return true;
+		},
+
+		identityValid() {
+			return this.identity.length > 1;
 		}
 	},
 	methods: {
 		async generateIdentity() {
-			try {
-				await axios.post('identity.php', {
-					createidval: true
-				});
-			} catch(err) {
-				alert('Failed to start identity creation. Check console for details');
-				console.log(err);
+			var authkey = $("#authkey").val();
+			// var identitypath = "/root/.local/share/storj/identity/storagenode";
+			// this.identity = identitypath;
+			if(authkey !== ""){
+				createidentifyToken(authkey,this.identity);
+				this.identityStep++;
 
-				return;
+
+				readidentitystatus();
+
+				setInterval(() => readidentitystatus(), 60000);
+
 			}
-
-			this.identityStep++;
-
-			updateLog();
-
-			setTimeout(() => this.updateLog(), 10 * 1000);
 		},
 
 		async updateLog() {
@@ -91,12 +106,55 @@ const app = new Vue({
 				email: this.email,
 				address: this.address,
 				host: this.host,
+				storage: this.storage,
+				directory: this.directory,
 				identity: this.identity
 			};
 
 			await axios.post('config.php', data);
 
-			location.href = 'dashboard.php';
+			location.href = 'config.php';
 		}
 	}
 });
+
+ // Create identity.
+function createidentifyToken(createidval,identitypath){
+   jQuery.ajax({
+      type: "POST",
+      url: "identity.php",
+      data: {
+	    createidval : createidval,
+	    identitypath : identitypath,
+	    identityString: createidval 
+       },
+      success: function (result) {
+        $(".logs").html("<b>Identity creation process is starting.</b><br><p>"+result+"</p>");
+      },
+      error: function () {
+        console.log("Error during create Identitfy operation");
+      }
+    });
+}
+
+
+
+// Read status from identity.php file.
+function readidentitystatus(){
+   jQuery.ajax({
+      type: "POST",
+      url: "identity.php",
+      data: {status : "status",},
+      success: function (result) {
+        if(result == "identity available at /root/.local/share/storj/identity"){
+          $(".logs").html("<b>"+result+"</b>");
+          identitydataval = 1;
+        }else{
+           $(".logs").html("<b>Identity creation process is running.</b><br><p>"+result+"</p>");
+        }
+      },
+      error: function () {
+        console.log("In tehre wrong on create Identitfy");
+      }
+    });
+}
