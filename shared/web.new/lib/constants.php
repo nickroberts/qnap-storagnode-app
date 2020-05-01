@@ -1,5 +1,7 @@
 <?php
 
+define("DEFAULT_IMAGE_NAME", "storjlabs/storagenode");
+define("DEFAULT_IMAGE_TAG", "beta");
 define("DEFAULT_CONTAINER_NAME", "storagenode");
 
 define("CONFIG_FILE_NAME", "config.json");

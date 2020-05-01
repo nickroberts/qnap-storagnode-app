@@ -18,13 +18,13 @@ function handlePostRequest() {
     break;
     case 'start':
       $output = $scripts->start();
-      return new ApiSuccessResponse(['output' => $output]);
+      return new ApiSuccessResponse($output);
     case 'stop':
       $output = $scripts->stop();
-      return new ApiSuccessResponse(['output' => $output]);
+      return new ApiSuccessResponse($output);
     case 'update':
       $output = $scripts->update();
-      return new ApiSuccessResponse(['output' => $output]);
+      return new ApiSuccessResponse($output);
     case '':
     default:
       return new ApiErrorResponse('Valid action is required', 400);
@@ -39,12 +39,15 @@ function handleGetRequest() {
     case 'config':
       $configFileData = $config->readConfigFile();
       return new ApiSuccessResponse($configFileData);
+    case 'validate':
+      $output = $config->validateConfigFile();
+      return new ApiSuccessResponse($output);
     case 'check':
       $output = $scripts->check();
-      return new ApiSuccessResponse(['output' => $output]);
+      return new ApiSuccessResponse($output);
     case 'tail':
       $output = Logger::tail($query->lines);
-      return new ApiSuccessResponse(['output' => $output]);
+      return new ApiSuccessResponse($output);
   }
   return new ApiErrorResponse('Not found', 404);
 }

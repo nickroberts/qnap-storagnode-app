@@ -1,84 +1,64 @@
 <template>
   <v-app class="app">
-    <v-navigation-drawer app color="secondary" dark v-model="drawer">
-      <div class="logo px-4 py-2 d-flex align-center justify-start">
-        <v-img
-          alt="Storj Logo"
-          class="shrink"
-          contain
-          src="./assets/logo.svg"
-          transition="scale-transition"
-          height="50"
-          width="100"
-        />
-        <div class="ml-4">|</div>
-        <div class="ml-4">Storage Node</div>
-      </div>
-
+    <v-navigation-drawer app color="primary" dark temporary v-model="drawer">
       <v-list dense>
-        <v-list-item link router-link to="/">
+        <v-list-item
+          v-for="item in items"
+          :key="item.title"
+          link
+          router-link
+          :to="item.to"
+          :href="item.href"
+          :target="item.target"
+        >
           <v-list-item-action>
-            <v-icon>dashboard</v-icon>
+            <v-icon>{{ item.icon }}</v-icon>
           </v-list-item-action>
           <v-list-item-content>
-            <v-list-item-title>Dashboard</v-list-item-title>
-          </v-list-item-content>
-        </v-list-item>
-        <v-list-item link router-link to="/config">
-          <v-list-item-action>
-            <v-icon>settings</v-icon>
-          </v-list-item-action>
-          <v-list-item-content>
-            <v-list-item-title>
-              Config
-            </v-list-item-title>
-          </v-list-item-content>
-        </v-list-item>
-        <v-list-item link router-link to="/wizard">
-          <v-list-item-action>
-            <v-icon>build</v-icon>
-          </v-list-item-action>
-          <v-list-item-content>
-            <v-list-item-title>Wizard</v-list-item-title>
-          </v-list-item-content>
-        </v-list-item>
-      </v-list>
-
-      <v-spacer></v-spacer>
-
-      <v-list dense>
-        <v-list-item link href="#">
-          <v-list-item-action>
-            <v-icon>description</v-icon>
-          </v-list-item-action>
-          <v-list-item-content>
-            <v-list-item-title>Documentation</v-list-item-title>
+            <v-list-item-title>{{ item.title }}</v-list-item-title>
           </v-list-item-content>
         </v-list-item>
       </v-list>
     </v-navigation-drawer>
 
-    <v-app-bar
-      app
-      dark
-      class="storj-gradient"
-      v-if="$vuetify.breakpoint.mdAndDown"
-    >
-      <v-app-bar-nav-icon @click.stop="drawer = !drawer" />
-      <v-spacer></v-spacer>
-      <div class="logo px-4 py-2 d-flex align-center justify-end">
-        <v-img
-          alt="Storj Logo"
-          class="shrink"
-          contain
-          src="./assets/logo.svg"
-          transition="scale-transition"
-          height="50"
-          width="100"
-        />
+    <v-app-bar app elevation="0" color="white" height="120">
+      <v-app-bar-nav-icon v-if="$vuetify.breakpoint.mdAndDown" light @click.stop="drawer = !drawer" />
+
+      <div class="logo px-4 py-2 d-flex align-center justify-end headline">
+        <router-link to="/">
+          <v-img
+            alt="Storj Logo"
+            class="shrink"
+            contain
+            src="./assets/logo.svg"
+            transition="scale-transition"
+            height="50"
+            width="125"
+          />
+        </router-link>
         <div class="ml-4">|</div>
-        <div class="ml-4">QNAP</div>
+        <div class="ml-4">Storage Node</div>
       </div>
+
+      <v-spacer></v-spacer>
+
+      <nav v-if="!$vuetify.breakpoint.mdAndDown">
+        <v-btn
+          class="ml-2"
+          color="transparent"
+          v-for="item in items"
+          :key="item.title"
+          link
+          elevation="0"
+          router-link
+          :to="item.to"
+          :href="item.href"
+          :target="item.target"
+        >
+          <v-icon left>{{ item.icon }}</v-icon>
+          {{ item.title }}
+        </v-btn>
+      </nav>
     </v-app-bar>
 
     <v-content>
@@ -93,23 +73,59 @@
 
 <script>
 export default {
-  name: "App",
+  name: 'App',
   components: {},
   data: () => ({
     copyright: new Date().getFullYear(),
     drawer: null,
+    items: [
+      {
+        icon: 'dashboard',
+        title: 'Dashboard',
+        to: '/'
+      },
+      {
+        icon: 'settings',
+        title: 'Setup',
+        to: '/setup'
+      },
+      {
+        icon: 'build',
+        title: 'Wizard',
+        to: '/wizard'
+      },
+      {
+        icon: 'description',
+        title: 'Documentation',
+        href: '#',
+        target: '_blank'
+      }
+    ]
   }),
-  props: {},
+  props: {}
 };
 </script>
 
 <style lang="scss">
 .v-application {
   background: #f0f2f4 !important;
+
+  a {
+    text-decoration: none;
+  }
 }
 
-.logo {
-  color: white;
+.v-app-bar {
+  nav {
+    .v-btn,
+    .v-btn:before,
+    .v-btn.v-btn--active {
+      background-color: transparent;
+    }
+    .v-btn {
+      color: var(--v-primary-base);
+    }
+  }
 }
 
 .storj-gradient {
@@ -144,9 +160,9 @@ export default {
     font-size: 1rem !important;
     height: 48px !important;
   }
-  &:not(.v-btn--icon) {
+  /* &:not(.v-btn--icon):not(.v-btn--block):not(.no-min-width) {
     min-width: 200px !important;
-  }
+  } */
 }
 
 .v-input__slot {
@@ -171,9 +187,11 @@ export default {
 .v-dialog {
   .v-card__actions {
     padding: 12px 24px;
-    .v-btn {
-      min-width: 100px !important;
-    }
+    /* .v-btn {
+      &:not(.v-btn--icon):not(.v-btn--block) {
+        min-width: 100px !important;
+      }
+    } */
   }
 }
 
@@ -192,9 +210,9 @@ export default {
 }
 
 .config-modal {
-  .v-btn {
+  /* &:not(.v-btn--icon):not(.v-btn--block) {
     min-width: 100px !important;
-  }
+  } */
   .config-modal-activator {
     padding: 0 16px;
   }

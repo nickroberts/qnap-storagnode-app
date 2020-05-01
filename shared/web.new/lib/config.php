@@ -5,14 +5,16 @@ require_once(__DIR__ . '/logger.php');
 
 class Config {
   private $defaultConfig = array(
-    'AuthKey' => null,
-    'Identity' => null,
-    'Port' => 28967,
-    'Wallet' => null,
-    'Allocation' => null,
-    'Bandwidth' => null,
-    'Email' => null,
-    'Directory' => null,
+    "authenticationKey" => null,
+    "containerName" => DEFAULT_CONTAINER_NAME,
+    "identityPath" => null,
+    "imageName" => DEFAULT_IMAGE_NAME,
+    "imageTag" => DEFAULT_IMAGE_TAG,
+		"hostname" => null,
+		"walletAddress" => null,
+		"storageAllocation" => null,
+		"emailAddress" => null,
+		"storageDirectory" => null
   );
 
   public function __construct() {
@@ -34,18 +36,32 @@ class Config {
 
   public function writeConfigFile($data) {
     $dataObject = (object) $data;
-    // $configData = $properties = array(
-	  //   'AuthKey' => $dataObject->authKey,
-	  //   'Identity' => $dataObject->identity,
-	  //   'Port' => $dataObject->port,
-	  //   'Wallet' => $dataObject->wallet,
-	  //   'Allocation' => $dataObject->allocation,
-	  //   'Bandwidth' => $dataObject->bandwidth,
-	  //   'Email' => $dataObject->email,
-	  //   'Directory' => $dataObject->directory
-    // );
     $this->save($dataObject);
     return $this->readConfigFile();
+  }
+
+  public function validateConfigFile() {
+    $config = (array) $this->readConfigFile();
+    $output = ['valid' => true];
+    $errors = [];
+    $requiredFields = [
+      "identityPath",
+      "hostname",
+      "walletAddress",
+      "storageAllocation",
+      "emailAddress",
+      "storageDirectory"
+    ];
+    foreach ($requiredFields as $field) {
+      if (!$config[$field]) {
+        $errors[$field] = "${field} is required";
+      }
+    }
+    if (count($errors) > 0) {
+      $output['valid'] = false;
+      $output['errors'] = $errors;
+    }
+    return (object) $output;
   }
 
   private function save($data) {

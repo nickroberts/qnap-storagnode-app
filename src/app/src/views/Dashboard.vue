@@ -9,33 +9,29 @@
     <v-row>
       <v-col cols="12" md="6">
         <v-card outlined tile class="fill-height">
-          <v-progress-circular
-            v-if="!status"
-            indeterminate
-            color="primary"
-            size="24"
-          ></v-progress-circular>
-          <div
-            class="d-flex justify-start justify-md-space-between align-start align-md-center pa-4 flex-column flex-md-row fill-height"
-            v-if="status"
-          >
+          <v-progress-circular v-if="!status" indeterminate color="primary" size="24"></v-progress-circular>
+          <div v-if="status" class="d-flex justify-start justify-space-between align-start pa-4 fill-height">
+            <StatusCard :status="status"
+              ><v-list-item class="px-0">
+                <v-list-item-content>
+                  <v-list-item-title>Container Image:</v-list-item-title>
+                  <v-list-item-subtitle>{{ status.dockerInfo.image }}</v-list-item-subtitle>
+                </v-list-item-content>
+              </v-list-item>
+
+              <v-list-item class="px-0">
+                <v-list-item-content>
+                  <v-list-item-title>Container Name:</v-list-item-title>
+                  <v-list-item-subtitle>{{ status.dockerInfo.names }}</v-list-item-subtitle>
+                </v-list-item-content>
+              </v-list-item>
+            </StatusCard>
             <div>
-              <div class="title">Node Status</div>
-              <div class="subtitle">
-                Container name:&nbsp;<strong>{{ status.containerName }}</strong>
+              <div v-if="status.status === 'online'" class="d-flex">
+                <v-btn class="d-block" color="primary" x-large @click="restart()">Restart</v-btn>
+                <v-btn class="d-block ml-4" color="red" outlined x-large @click="stop()">Stop</v-btn>
               </div>
-              <div class="subtitle">
-                <span v-if="!status.Status" class="red--text font-weight-bold"
-                  >Offline</span
-                >
-                <span v-if="status.Status" class="green--text font-weight-bold"
-                  >Online</span
-                >
-              </div>
-            </div>
-            <div class="mt-4 mt-md-0 align-self-center">
-              <v-btn v-if="!status.Status" color="primary" large>Start</v-btn>
-              <v-btn v-if="status.Status" color="red" dark large>Stop</v-btn>
+              <v-btn v-if="status.status !== 'online'" color="primary" x-large @click="start()">Start</v-btn>
             </div>
           </div>
         </v-card>
@@ -43,24 +39,12 @@
 
       <v-col cols="12" md="6">
         <v-card outlined tile class="fill-height">
-          <v-progress-circular
-            v-if="!status"
-            indeterminate
-            color="primary"
-            size="24"
-          ></v-progress-circular>
-          <div
-            class="d-flex justify-start justify-md-space-between align-start pa-4 flex-column flex-md-row fill-height"
-            v-if="status"
-          >
-            <v-spacer></v-spacer>
-            <div class="mt-4 mt-md-0 align-self-center">
-              <v-btn
-                color="primary"
-                :href="status.statsHost"
-                target="_blank"
-                large
-              >
+          <v-progress-circular v-if="!status" indeterminate color="primary" size="24"></v-progress-circular>
+          <div v-if="status" class="d-flex justify-start justify-space-between align-start pa-4 fill-height">
+            <VersionCard :status="status" />
+            <div class="d-flex">
+              <v-btn color="primary" large @click="update()">Update Node</v-btn>
+              <v-btn class="ml-4" color="primary" :href="status.statsHost" target="_blank" x-large outlined>
                 <v-icon left dark>open_in_new</v-icon>
                 View Storj Stats
               </v-btn>
@@ -69,32 +53,56 @@
         </v-card>
       </v-col>
     </v-row>
+
+    <v-row>
+      <v-col cols="12">
+        <v-card class="pa-4" outlined tile>
+          <LatestLog :height="500" />
+        </v-card>
+      </v-col>
+    </v-row>
   </v-container>
 </template>
 
 <script>
-import axios from "axios";
+import * as api from '@/lib/api';
+import StatusCard from '@/components/StatusCard.vue';
+import VersionCard from '@/components/VersionCard.vue';
+import LatestLog from '@/components/LatestLog.vue';
 
 export default {
-  name: "Dashboard",
-  components: {},
+  name: 'Dashboard',
+  components: {
+    StatusCard,
+    VersionCard,
+    LatestLog
+  },
   data: () => ({
-    status: null,
+    status: null
   }),
   methods: {
-    getStatus() {
-      axios
-        .get("/api.php", { params: { action: "check" } })
-        .then(({ data }) => {
-          this.status = data.data.output;
-        });
+    start() {
+      api.start();
     },
+    stop() {
+      api.stop();
+    },
+    restart() {
+      api.restart();
+    },
+    update() {
+      api.update();
+    },
+    async getStatus() {
+      const response = await api.getStatus();
+      this.status = response;
+    }
   },
   created() {
     this.getStatus();
   },
   watch: {
-    $route: "getStatus",
-  },
+    $route: 'getStatus'
+  }
 };
 </script>
