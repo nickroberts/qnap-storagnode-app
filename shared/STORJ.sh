@@ -17,7 +17,7 @@ case "$1" in
     fi
     : ADD START ACTIONS HERE
     echo `date` "Create $QPKG_ROOT/web folder link to UTLABS folder " >> /tmp/runUTLABS.log
-    ln -s $QPKG_ROOT/web.net /home/Qhttpd/Web/UTLABS
+    ln -s $QPKG_ROOT/web.new /home/Qhttpd/Web/UTLABS
     echo `date` " UTLABS : Request to start ($@) completed " >> $LOGFILE
     ;;
 
