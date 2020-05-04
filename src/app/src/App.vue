@@ -22,7 +22,7 @@
     </v-navigation-drawer>
 
     <v-app-bar app elevation="0" color="white" height="120">
-      <v-app-bar-nav-icon v-if="$vuetify.breakpoint.mdAndDown" light @click.stop="drawer = !drawer" />
+      <v-app-bar-nav-icon v-if="$vuetify.breakpoint.smAndDown" light @click.stop="drawer = !drawer" />
 
       <div class="logo px-4 py-2 d-flex align-center justify-end headline">
         <router-link to="/">
@@ -42,7 +42,7 @@
 
       <v-spacer></v-spacer>
 
-      <nav v-if="!$vuetify.breakpoint.mdAndDown">
+      <nav v-if="!$vuetify.breakpoint.smAndDown">
         <v-btn
           class="ml-2"
           color="transparent"
@@ -77,7 +77,7 @@ export default {
   components: {},
   data: () => ({
     copyright: new Date().getFullYear(),
-    drawer: null,
+    drawer: false,
     items: [
       {
         icon: 'dashboard',

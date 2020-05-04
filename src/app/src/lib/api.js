@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const client = axios.create({
-  baseURL: '/UTLABS/'
+  baseURL: process.env.BASE_URL
 });
 
 export const start = () => {

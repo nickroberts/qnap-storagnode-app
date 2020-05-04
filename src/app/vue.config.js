@@ -15,5 +15,5 @@ module.exports = {
       }
     }
   },
-  publicPath: '/UTLABS/'
+  publicPath: process.env.BASE_URL
 };
