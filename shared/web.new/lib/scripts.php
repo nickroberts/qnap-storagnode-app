@@ -18,8 +18,8 @@ class Scripts {
     $this->configFile = $config->configFile;
     $this->serverAddress = $_SERVER['SERVER_ADDR'];
     $this->checkScript = realpath(__DIR__ . "/../scripts/check.sh");
-    $this->startScript = '../scripts/storagenodestart.sh';
-    $this->stopScript = '../scripts/storagenodestop.sh';
+    $this->startScript = realpath(__DIR__ . "/../scripts/start.sh");
+    $this->stopScript = realpath(__DIR__ . "/../scripts/stop.sh");
     $this->testScript = '../scripts/test.sh';
     $this->updateScript = '../scripts/storagenodeupdate.sh';
     $this->configFileData = $config->readConfigFile();
@@ -80,13 +80,14 @@ class Scripts {
 
   public function start() {
     Logger::log("Starting storj server.");
-    $ip = exec("ip -4 -o addr show eth0 | awk '{print $4}' | cut -d "/" -f 1");
-    $containerName = $this->configFileData->containerName ? $this->configFileData->containerName : DEFAULT_CONTAINER_NAME;
-    $port = $hostnameParts[2];
-    $cmd = "docker run -d --restart no -p {$port}:28967 -p 14002:14002 -e WALLET=\"{$this->configFileData->walletAddress}\" -e EMAIL=\"{$this->configFileData->hostname}\" -e ADDRESS=\"{$ip}:{$port}\" -e STORAGE=\"{$this->configFileData->storageAllocation}\" -v {$this->configFileData->identityPath}:/app/identity -v {$this->configFileData->storageDirectory}:/app/config --name {$containerName} {$DEFAULT_IMAGE_NAME}:{$DEFAULT_IMAGE_TAG}";
-    Logger::log("Running command: " . $cmd);
-    $output = exec($cmd);
-    Logger::log("Start command output: " . $output);
+    $output = [];
+    $startScript = $this->startScript;
+    $configFileData = $this->configFileData;
+    $cmd = "/bin/bash {$startScript} {$configFileData->containerName} {$configFileData->hostname} {$configFileData->identifyPath} {$configFileData->walletAddress} {$configFileData->storageAllocation} {$configFileData->emailAddress} {$configFileData->storageDirectory}";
+    Logger::log("Running command: $cmd");
+    $cmdOutput = shell_exec($cmd);
+    Logger::log("Start command output: " . $cmdOutput);
+    $output['output'] = $cmdOutput;
     return $output;
   }
 
