@@ -20,8 +20,8 @@ class Scripts {
     $this->checkScript = realpath(__DIR__ . "/../scripts/check.sh");
     $this->startScript = realpath(__DIR__ . "/../scripts/start.sh");
     $this->stopScript = realpath(__DIR__ . "/../scripts/stop.sh");
-    $this->testScript = '../scripts/test.sh';
-    $this->updateScript = '../scripts/storagenodeupdate.sh';
+    $this->testScript = realpath(__DIR__ . "/../scripts/test.sh");
+    $this->updateScript = realpath(__DIR__ . "/../scripts/update.sh");
     $this->configFileData = $config->readConfigFile();
   }
 
@@ -83,7 +83,7 @@ class Scripts {
     $output = [];
     $startScript = $this->startScript;
     $configFileData = $this->configFileData;
-    $cmd = "/bin/bash {$startScript} {$configFileData->containerName} {$configFileData->hostname} {$configFileData->identifyPath} {$configFileData->walletAddress} {$configFileData->storageAllocation} {$configFileData->emailAddress} {$configFileData->storageDirectory}";
+    $cmd = "/bin/bash {$startScript} {$configFileData->containerName} {$configFileData->hostname} {$configFileData->identityPath} {$configFileData->walletAddress} {$configFileData->storageAllocation} {$configFileData->emailAddress} {$configFileData->storageDirectory}";
     Logger::log("Running command: $cmd");
     $cmdOutput = shell_exec($cmd);
     Logger::log("Start command output: " . $cmdOutput);
@@ -93,15 +93,14 @@ class Scripts {
 
   public function stop() {
     Logger::log("Stopping storj server.");
-    $containerName = $this->configFileData->containerName ? $this->configFileData->containerName : DEFAULT_CONTAINER_NAME;
-    $cmd = "docker stop {$containerName}";
-    Logger::log("Running command: " . $cmd);
-    $output = exec($cmd);
-    Logger::log("Stop command output: " . $output);
-    $cmd = "docker rm -f {$containerName}";
-    Logger::log("Running command: " . $cmd);
-    $output = exec($cmd);
-    Logger::log("Remove command output: " . $output);
+    $output = [];
+    $stopScript = $this->stopScript;
+    $configFileData = $this->configFileData;
+    $cmd = "/bin/bash {$stopScript} {$configFileData->containerName}";
+    Logger::log("Running command: $cmd");
+    $cmdOutput = shell_exec($cmd);
+    Logger::log("Stop command output: " . $cmdOutput);
+    $output['output'] = $cmdOutput;
     return $output;
   }
 
