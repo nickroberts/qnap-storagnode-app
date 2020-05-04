@@ -44,14 +44,6 @@
       </v-col>
     </v-row>
 
-    <v-row>
-      <v-col cols="12">
-        <v-card class="pa-4" outlined tile>
-          <LatestLog />
-        </v-card>
-      </v-col>
-    </v-row>
-
     <v-row v-if="!config">
       <v-col cols="12">
         <v-card class="pa-4" outlined tile>
@@ -123,6 +115,14 @@
         >
           <StorageDirectoryDialog :data="config" :on-save="save" />
         </ConfigCard>
+      </v-col>
+    </v-row>
+
+    <v-row>
+      <v-col cols="12">
+        <v-card class="pa-4" outlined tile>
+          <LatestLog />
+        </v-card>
       </v-col>
     </v-row>
   </v-container>

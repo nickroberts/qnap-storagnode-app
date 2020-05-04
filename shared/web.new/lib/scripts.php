@@ -41,7 +41,7 @@ class Scripts {
     $cmdOutput = trim(exec($cmd));
     // $cmdOutput = trim('{"Command":"\"docker-php-entrypoint apache2-foreground\"","CreatedAt":"2020-04-30 21:35:53 -0400 EDT","ID":"b7b0c14d76af396201c41ed3c3e5ebae34f15767083a13d6a0ef9a398e75a8f5","Image":"php:7.3-apache","Labels":"com.docker.compose.config-hash=597b5dd915ff90d76d5b2db2d3c8ebb8e0ede2a68401065bfb0702ce2c29c4ea,com.docker.compose.container-number=1,com.docker.compose.oneoff=False,com.docker.compose.project=qnap-storagnode-app,com.docker.compose.project.config_files=docker-compose.yml,com.docker.compose.project.working_dir=/Volumes/Workspace/Workspace/Utropicmedia/Storj/qnap-storagnode-app,com.docker.compose.service=qnap-storagnode-app.php,com.docker.compose.version=1.25.5","LocalVolumes":"0","Mounts":"/Volumes/Workspace/Workspace/Utropicmedia/Storj/qnap-storagnode-app/volumes/logs,/Volumes/Workspace/Workspace/Utropicmedia/Storj/qnap-storagnode-app/shared/web.new","Names":"qnap-storagnode-app.php","Networks":"qnap-storagnode-app_qnap-storagnode-app.network","Ports":"0.0.0.0:8000-\u003e80/tcp","RunningFor":"33 minutes ago","Size":"0B","Status":"Up 33 minutes"}');
     // $cmdOutput = trim('{"Command":"\"docker-php-entrypoint apache2-foreground\"","CreatedAt":"2020-04-30 21:35:53 -0400 EDT","ID":"b7b0c14d76af396201c41ed3c3e5ebae34f15767083a13d6a0ef9a398e75a8f5","Image":"php:7.3-apache","Labels":"com.docker.compose.config-hash=597b5dd915ff90d76d5b2db2d3c8ebb8e0ede2a68401065bfb0702ce2c29c4ea,com.docker.compose.container-number=1,com.docker.compose.oneoff=False,com.docker.compose.project=qnap-storagnode-app,com.docker.compose.project.config_files=docker-compose.yml,com.docker.compose.project.working_dir=/Volumes/Workspace/Workspace/Utropicmedia/Storj/qnap-storagnode-app,com.docker.compose.service=qnap-storagnode-app.php,com.docker.compose.version=1.25.5","LocalVolumes":"0","Mounts":"/Volumes/Workspace/Workspace/Utropicmedia/Storj/qnap-storagnode-app/volumes/logs,/Volumes/Workspace/Workspace/Utropicmedia/Storj/qnap-storagnode-app/shared/web.new","Names":"qnap-storagnode-app.php","Networks":"qnap-storagnode-app_qnap-storagnode-app.network","Ports":"0.0.0.0:8000-\u003e80/tcp","RunningFor":"33 minutes ago","Size":"0B","Status":"Exited (0) 33 minutes ago"}');
-    LOGGER::log("Docker ps output: " . $cmdOutput);
+    Logger::log("Docker ps output: " . $cmdOutput);
 
     $dockerInfo = (array) json_decode($cmdOutput);
     if (json_last_error() == JSON_ERROR_NONE) {
@@ -80,22 +80,34 @@ class Scripts {
 
   public function start() {
     Logger::log("Starting storj server.");
-    $output = shell_exec("/bin/bash {$this->startScript} {$this->configFileData->Port} {$this->configFileData->Wallet} {$this->configFileData->Email} {$this->configFileData->Bandwidth} {$this->configFileData->Allocation} {$this->configFileData->Directory} {$this->configFileData->Identity} 2>&1");
-    LOGGER::log($output);
+    $ip = exec("ip -4 -o addr show eth0 | awk '{print $4}' | cut -d "/" -f 1");
+    $containerName = $this->configFileData->containerName ? $this->configFileData->containerName : DEFAULT_CONTAINER_NAME;
+    $port = $hostnameParts[2];
+    $cmd = "docker run -d --restart no -p {$port}:28967 -p 14002:14002 -e WALLET=\"{$this->configFileData->walletAddress}\" -e EMAIL=\"{$this->configFileData->hostname}\" -e ADDRESS=\"{$ip}:{$port}\" -e STORAGE=\"{$this->configFileData->storageAllocation}\" -v {$this->configFileData->identityPath}:/app/identity -v {$this->configFileData->storageDirectory}:/app/config --name {$containerName} {$DEFAULT_IMAGE_NAME}:{$DEFAULT_IMAGE_TAG}";
+    Logger::log("Running command: " . $cmd);
+    $output = exec($cmd);
+    Logger::log("Start command output: " . $output);
     return $output;
   }
 
   public function stop() {
     Logger::log("Stopping storj server.");
-    $output = shell_exec("/bin/bash {$this->stopScript} 2>&1 ");
-    LOGGER::log($output);
+    $containerName = $this->configFileData->containerName ? $this->configFileData->containerName : DEFAULT_CONTAINER_NAME;
+    $cmd = "docker stop {$containerName}";
+    Logger::log("Running command: " . $cmd);
+    $output = exec($cmd);
+    Logger::log("Stop command output: " . $output);
+    $cmd = "docker rm -f {$containerName}";
+    Logger::log("Running command: " . $cmd);
+    $output = exec($cmd);
+    Logger::log("Remove command output: " . $output);
     return $output;
   }
 
   public function update() {
     Logger::log("Updating storj server.");
-    $output = shell_exec("/bin/bash {$this->updateScript} {$this->configFile} {$this->configFileData->Port} {$this->configFileData->Wallet} {$this->configFileData->Email} {$this->configFileData->Bandwidth} {$this->configFileData->Allocation} {$this->configFileData->Directory} {$this->configFileData->Identity} {$this->serverAddress} 2>&1");
-    LOGGER::log($output);
+    // $output = shell_exec("/bin/bash {$this->updateScript} {$this->configFile} {$this->configFileData->Port} {$this->configFileData->Wallet} {$this->configFileData->Email} {$this->configFileData->Bandwidth} {$this->configFileData->Allocation} {$this->configFileData->Directory} {$this->configFileData->Identity} {$this->serverAddress} 2>&1");
+    Logger::log("Update command output: " . $output);
     return $output;
   }
 }

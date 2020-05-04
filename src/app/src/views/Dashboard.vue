@@ -11,21 +11,7 @@
         <v-card outlined tile class="fill-height">
           <v-progress-circular v-if="!status" indeterminate color="primary" size="24"></v-progress-circular>
           <div v-if="status" class="d-flex justify-start justify-space-between align-start pa-4 fill-height">
-            <StatusCard :status="status"
-              ><v-list-item class="px-0">
-                <v-list-item-content>
-                  <v-list-item-title>Container Image:</v-list-item-title>
-                  <v-list-item-subtitle>{{ status.dockerInfo.image }}</v-list-item-subtitle>
-                </v-list-item-content>
-              </v-list-item>
-
-              <v-list-item class="px-0">
-                <v-list-item-content>
-                  <v-list-item-title>Container Name:</v-list-item-title>
-                  <v-list-item-subtitle>{{ status.dockerInfo.names }}</v-list-item-subtitle>
-                </v-list-item-content>
-              </v-list-item>
-            </StatusCard>
+            <StatusCard :status="status" />
             <div>
               <div v-if="status.status === 'online'" class="d-flex">
                 <v-btn class="d-block" color="primary" x-large @click="restart()">Restart</v-btn>
@@ -95,6 +81,7 @@ export default {
     },
     async getStatus() {
       const response = await api.getStatus();
+      console.log(response);
       this.status = response;
     }
   },
