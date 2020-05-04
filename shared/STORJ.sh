@@ -24,6 +24,7 @@ case "$1" in
     : ADD START ACTIONS HERE
     echo `get_date()` "Create $QPKG_ROOT/web folder link to UTLABS folder " >> /tmp/runUTLABS.log
     ln -s $QPKG_ROOT/web.new /home/Qhttpd/Web/UTLABS
+    chmod -Rf 777 /home/Qhttpd/Web/UTLABS
     echo `get_date()` " UTLABS : Request to start ($@) completed " >> $LOGFILE
     ;;
 

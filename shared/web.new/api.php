@@ -7,6 +7,12 @@ require_once(__DIR__ . '/lib/response.php');
 require_once(__DIR__ . '/lib/scripts.php');
 require_once(__DIR__ . '/lib/util.php');
 
+
+function exception_error_handler($errno, $errstr, $errfile, $errline ) {
+  throw new ErrorException($errstr, $errno, 0, $errfile, $errline);
+}
+set_error_handler("exception_error_handler");
+
 function handlePostRequest() {
   $config = new Config();
   $scripts = new Scripts();
@@ -16,12 +22,6 @@ function handlePostRequest() {
       $configFileData = $config->writeConfigFile($data->data);
       return new ApiSuccessResponse($configFileData);
     break;
-    case 'start':
-      $output = $scripts->start();
-      return new ApiSuccessResponse($output);
-    case 'stop':
-      $output = $scripts->stop();
-      return new ApiSuccessResponse($output);
     case 'update':
       $output = $scripts->update();
       return new ApiSuccessResponse($output);
@@ -36,14 +36,20 @@ function handleGetRequest() {
   $scripts = new Scripts();
   $query = Util::getQueryData();
   switch ($_GET['action']) {
+    case 'check':
+      $output = $scripts->check();
+      return new ApiSuccessResponse($output);
     case 'config':
       $configFileData = $config->readConfigFile();
       return new ApiSuccessResponse($configFileData);
+    case 'start':
+      $output = $scripts->start();
+      return new ApiSuccessResponse($output);
+    case 'stop':
+      $output = $scripts->stop();
+      return new ApiSuccessResponse($output);
     case 'validate':
       $output = $config->validateConfigFile();
-      return new ApiSuccessResponse($output);
-    case 'check':
-      $output = $scripts->check();
       return new ApiSuccessResponse($output);
     case 'tail':
     case 'tailIdentity':
@@ -65,7 +71,8 @@ try {
       $response = new ApiErrorResponse('Not found', 404);
   }
 } catch (Exception $e) {
-  $response = new ApiErrorResponse('Server error', 500);
+  // $message = $e->getMessage() ? $e->getMessage() : "Server Error";
+  $response = new ApiErrorResponse("Server Error", 500);
 }
 
 

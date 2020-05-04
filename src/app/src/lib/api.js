@@ -4,12 +4,14 @@ const client = axios.create({
   baseURL: process.env.BASE_URL
 });
 
-export const start = () => {
-  console.log('start');
+export const start = async () => {
+  const { data } = await client.get('api.php', { params: { action: 'start' } });
+  return data.data;
 };
 
-export const stop = () => {
-  console.log('stop');
+export const stop = async () => {
+  const { data } = await client.get('api.php', { params: { action: 'stop' } });
+  return data.data;
 };
 
 export const restart = () => {
