@@ -12,7 +12,15 @@
       </v-col>
     </v-row>
 
-    <v-row>
+    <v-row v-if="loading">
+      <v-col cols="12">
+        <v-card class="pa-4" outlined tile>
+          <v-progress-circular indeterminate color="primary" size="24"></v-progress-circular>
+        </v-card>
+      </v-col>
+    </v-row>
+
+    <v-row v-if="!loading">
       <v-col cols="12" md="6">
         <v-card outlined tile class="fill-height">
           <v-progress-circular v-if="!status" indeterminate color="primary" size="24"></v-progress-circular>
@@ -40,14 +48,6 @@
               </v-btn>
             </div>
           </div>
-        </v-card>
-      </v-col>
-    </v-row>
-
-    <v-row v-if="!config">
-      <v-col cols="12">
-        <v-card class="pa-4" outlined tile>
-          <v-progress-circular indeterminate color="primary" size="24"></v-progress-circular>
         </v-card>
       </v-col>
     </v-row>
@@ -118,7 +118,7 @@
       </v-col>
     </v-row>
 
-    <v-row>
+    <v-row v-if="!loading">
       <v-col cols="12">
         <v-card class="pa-4" outlined tile>
           <LatestLog />
@@ -158,6 +158,7 @@ export default {
   data: () => ({
     config: null,
     latestLog: null,
+    loading: false,
     status: null,
     dialog: false
   }),
@@ -165,25 +166,40 @@ export default {
     this.init();
   },
   methods: {
-    start() {
-      api.start();
+    async start() {
+      await api.start();
+      await this.init();
     },
-    stop() {
-      api.stop();
+    async stop() {
+      await api.stop();
+      await this.init();
     },
-    restart() {
-      api.restart();
+    async restart() {
+      await api.restart();
+      await this.init();
     },
-    update() {
-      api.update();
+    async update() {
+      await api.update();
+      await this.init();
     },
-    init() {
-      api.getConfig().then(response => (this.config = response));
-      api.getStatus().then(response => (this.status = response));
+    async getConfig() {
+      const response = await api.getConfig();
+      this.config = response;
+    },
+    async getStatus() {
+      const response = await api.getStatus();
+      this.status = response;
+    },
+    async init() {
+      this.loading = true;
+      await Promise.all(this.getConfig(), this.getStatus());
+      this.loading = false;
     },
     async save(configData) {
-      const config = await api.saveConfig(configData);
-      this.config = config;
+      this.loading = true;
+      await api.saveConfig(configData);
+      await this.init();
+      this.loading = false;
     }
   }
 };

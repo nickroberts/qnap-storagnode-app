@@ -56,28 +56,23 @@ class Scripts {
         $versionScript = $this->versionScript;
         $versionCmd = "/bin/bash {$versionScript} {$configFileData->containerName}";
         $versionOutput = trim(shell_exec($versionCmd));
-      }
-    }
-
-    // TODO: Parse and get the version.
-    // $versionScript = $this->versionScript;
-    // $versionCmd = "/bin/bash {$versionScript} {$configFileData->containerName}";
-    // $versionOutput = trim(shell_exec($versionCmd));
-//     $versionOutput = trim("Release build
+        //     $versionOutput = trim("Release build
 // Version: v1.1.1
 // Build timestamp: 01 Apr 20 15:19 UTC
 // Git commit: 17923e6fd199e2b33a6ef5853a76f9be68322e79");
 
-    if ($versionOutput) {
-      $versionInfo = [];
-      $lines = explode("\n", $versionOutput);
-      foreach ($lines as $key => $value) {
-        $split = explode(":", $value, 2);
-        if (count($split) > 1) {
-          $versionInfo[$split[0]] = trim($split[1]);
+        if ($versionOutput) {
+          $versionInfo = [];
+          $lines = explode("\n", $versionOutput);
+          foreach ($lines as $key => $value) {
+            $split = explode(":", $value, 2);
+            if (count($split) > 1) {
+              $versionInfo[$split[0]] = trim($split[1]);
+            }
+          }
+          $output['versionInfo'] = $versionInfo;
         }
       }
-      $output['versionInfo'] = $versionInfo;
     }
 
     $output = Util::convertKeysToCamelCase($output);
@@ -90,7 +85,9 @@ class Scripts {
     $output = [];
     $startScript = $this->startScript;
     $configFileData = $this->configFileData;
-    $cmd = "/bin/bash {$startScript} {$configFileData->containerName} storjlabs/storagenode:beta {$configFileData->hostname} {$configFileData->identityPath} {$configFileData->walletAddress} {$configFileData->storageAllocation} {$configFileData->emailAddress} {$configFileData->storageDirectory}";
+    $imageName = DEFAULT_IMAGE_NAME;
+    $imageTag = DEFAULT_IMAGE_TAG;
+    $cmd = "/bin/bash {$startScript} {$configFileData->containerName} {$imageName}:{$imageTag} {$configFileData->hostname} {$configFileData->identityPath} {$configFileData->walletAddress} {$configFileData->storageAllocation} {$configFileData->emailAddress} {$configFileData->storageDirectory}";
     Logger::log("Running command: $cmd");
     $cmdOutput = shell_exec($cmd);
     Logger::log("Start command output: " . $cmdOutput);
@@ -120,12 +117,28 @@ class Scripts {
       $startOutput = $this->start();
       $output['startOutput'] = $startOutput;
     }
+    Logger::log("Restart command output: " . $output);
     return $output;
   }
 
   public function update() {
     Logger::log("Updating storj server.");
-    // $output = shell_exec("/bin/bash {$this->updateScript} {$this->configFile} {$this->configFileData->Port} {$this->configFileData->Wallet} {$this->configFileData->Email} {$this->configFileData->Bandwidth} {$this->configFileData->Allocation} {$this->configFileData->Directory} {$this->configFileData->Identity} {$this->serverAddress} 2>&1");
+    $output = [];
+    $stopOutput = $this->stop();
+    $output['stopOutput'] = $stopOutput;
+    if ($stopOutput) {
+      $updateScript = $this->updateScript;
+      $imageName = DEFAULT_IMAGE_NAME;
+      $imageTag = DEFAULT_IMAGE_TAG;
+      $updateCmd = "/bin/bash {$updateScript} {$imageName}:{$imageTag}";
+      Logger::log("Running command: $updateCmd");
+      $updateCmdOutput = shell_exec($updateCmd);
+      $output['updateCmdOutput'] = $updateCmdOutput;
+      if ($updateCmdOutput) {
+        $startOutput = $this->start();
+        $output['startOutput'] = $startOutput;
+      }
+    }
     Logger::log("Update command output: " . $output);
     return $output;
   }

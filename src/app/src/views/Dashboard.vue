@@ -6,11 +6,18 @@
       </v-col>
     </v-row>
 
-    <v-row>
+    <v-row v-if="loading">
+      <v-col cols="12">
+        <v-card class="pa-4" outlined tile>
+          <v-progress-circular indeterminate color="primary" size="24"></v-progress-circular>
+        </v-card>
+      </v-col>
+    </v-row>
+
+    <v-row v-if="!loading">
       <v-col cols="12" md="6">
         <v-card outlined tile class="fill-height">
-          <v-progress-circular v-if="!status" indeterminate color="primary" size="24"></v-progress-circular>
-          <div v-if="status" class="d-flex justify-start justify-space-between align-start pa-4 fill-height">
+          <div class="d-flex justify-start justify-space-between align-start pa-4 fill-height">
             <StatusCard :status="status" />
             <div>
               <div v-if="status.status === 'online'" class="d-flex">
@@ -25,8 +32,7 @@
 
       <v-col cols="12" md="6">
         <v-card outlined tile class="fill-height">
-          <v-progress-circular v-if="!status" indeterminate color="primary" size="24"></v-progress-circular>
-          <div v-if="status" class="d-flex justify-start justify-space-between align-start pa-4 fill-height">
+          <div class="d-flex justify-start justify-space-between align-start pa-4 fill-height">
             <VersionCard :status="status" />
             <div class="d-flex">
               <v-btn color="primary" large @click="update()">Update Node</v-btn>
@@ -40,7 +46,7 @@
       </v-col>
     </v-row>
 
-    <v-row>
+    <v-row v-if="!loading">
       <v-col cols="12">
         <v-card class="pa-4" outlined tile>
           <LatestLog :height="500" />
@@ -64,25 +70,31 @@ export default {
     LatestLog
   },
   data: () => ({
+    loading: false,
     status: null
   }),
   methods: {
-    start() {
-      api.start();
+    async start() {
+      await api.start();
+      await this.getStatus();
     },
-    stop() {
-      api.stop();
+    async stop() {
+      await api.stop();
+      await this.getStatus();
     },
-    restart() {
-      api.restart();
+    async restart() {
+      await api.restart();
+      await this.getStatus();
     },
-    update() {
-      api.update();
+    async update() {
+      await api.update();
+      await this.getStatus();
     },
     async getStatus() {
+      this.loading = true;
       const response = await api.getStatus();
-      console.log(response);
       this.status = response;
+      this.loading = false;
     }
   },
   created() {

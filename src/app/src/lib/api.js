@@ -14,12 +14,14 @@ export const stop = async () => {
   return data.data;
 };
 
-export const restart = () => {
-  console.log('restart');
+export const restart = async () => {
+  const { data } = await client.get('api.php', { params: { action: 'restart' } });
+  return data.data;
 };
 
-export const update = () => {
-  console.log('update');
+export const update = async () => {
+  const { data } = await client.get('api.php', { params: { action: 'update' } });
+  return data.data;
 };
 
 export const getStatus = async () => {

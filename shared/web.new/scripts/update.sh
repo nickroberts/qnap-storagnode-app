@@ -2,4 +2,7 @@
 
 export PATH=$PATH:/share/CACHEDEV1_DATA/.qpkg/container-station/bin
 
-echo "Update" 2>&1
+# Arguments:
+# 1. image name & tag
+
+docker pull ${2} 2>&1
