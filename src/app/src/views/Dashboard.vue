@@ -75,18 +75,22 @@ export default {
   }),
   methods: {
     async start() {
+      this.loading = true;
       await api.start();
       await this.getStatus();
     },
     async stop() {
+      this.loading = true;
       await api.stop();
       await this.getStatus();
     },
     async restart() {
+      this.loading = true;
       await api.restart();
       await this.getStatus();
     },
     async update() {
+      this.loading = true;
       await api.update();
       await this.getStatus();
     },

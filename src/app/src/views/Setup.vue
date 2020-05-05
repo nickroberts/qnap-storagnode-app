@@ -167,22 +167,27 @@ export default {
   },
   methods: {
     async start() {
+      this.loading = true;
       await api.start();
       await this.init();
     },
     async stop() {
+      this.loading = true;
       await api.stop();
       await this.init();
     },
     async restart() {
+      this.loading = true;
       await api.restart();
       await this.init();
     },
     async update() {
+      this.loading = true;
       await api.update();
       await this.init();
     },
     async getConfig() {
+      this.loading = true;
       const response = await api.getConfig();
       this.config = response;
     },

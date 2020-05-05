@@ -117,7 +117,7 @@ class Scripts {
       $startOutput = $this->start();
       $output['startOutput'] = $startOutput;
     }
-    Logger::log("Restart command output: " . $output);
+    Logger::log("Restarted storj server.");
     return $output;
   }
 
