@@ -48,6 +48,9 @@ function handleGetRequest() {
     case 'stop':
       $output = $scripts->stop();
       return new ApiSuccessResponse($output);
+    case 'restart':
+      $output = $scripts->restart();
+      return new ApiSuccessResponse($output);
     case 'validate':
       $output = $config->validateConfigFile();
       return new ApiSuccessResponse($output);

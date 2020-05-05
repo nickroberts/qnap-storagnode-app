@@ -22,6 +22,7 @@ class Scripts {
     $this->stopScript = realpath(__DIR__ . "/../scripts/stop.sh");
     $this->testScript = realpath(__DIR__ . "/../scripts/test.sh");
     $this->updateScript = realpath(__DIR__ . "/../scripts/update.sh");
+    $this->versionScript = realpath(__DIR__ . "/../scripts/version.sh");
     $this->configFileData = $config->readConfigFile();
   }
 
@@ -50,19 +51,25 @@ class Scripts {
       // Util::dd(strpos($dockerInfo['Status'], 'Up') === true);
       if (strpos($dockerInfo['Status'], 'Up') >= 0 && strpos($dockerInfo['Status'], 'Exited') === false) {
         $output['status'] = 'online';
+
+        // Parse and get the version.
+        $versionScript = $this->versionScript;
+        $versionCmd = "/bin/bash {$versionScript} {$configFileData->containerName}";
+        $versionOutput = trim(shell_exec($versionCmd));
       }
     }
 
     // TODO: Parse and get the version.
-    $versionCmd = "docker exec `docker ps -l -q -f 'name={$containerName}'` sh -c \"/app/storagenode version\"";
-    $versionOutput = trim(exec($cmd));
+    // $versionScript = $this->versionScript;
+    // $versionCmd = "/bin/bash {$versionScript} {$configFileData->containerName}";
+    // $versionOutput = trim(shell_exec($versionCmd));
 //     $versionOutput = trim("Release build
 // Version: v1.1.1
 // Build timestamp: 01 Apr 20 15:19 UTC
 // Git commit: 17923e6fd199e2b33a6ef5853a76f9be68322e79");
 
-  if ($versionOutput) {
-    $versionInfo = [];
+    if ($versionOutput) {
+      $versionInfo = [];
       $lines = explode("\n", $versionOutput);
       foreach ($lines as $key => $value) {
         $split = explode(":", $value, 2);
@@ -83,7 +90,7 @@ class Scripts {
     $output = [];
     $startScript = $this->startScript;
     $configFileData = $this->configFileData;
-    $cmd = "/bin/bash {$startScript} {$configFileData->containerName} {$configFileData->hostname} {$configFileData->identityPath} {$configFileData->walletAddress} {$configFileData->storageAllocation} {$configFileData->emailAddress} {$configFileData->storageDirectory}";
+    $cmd = "/bin/bash {$startScript} {$configFileData->containerName} storjlabs/storagenode:beta {$configFileData->hostname} {$configFileData->identityPath} {$configFileData->walletAddress} {$configFileData->storageAllocation} {$configFileData->emailAddress} {$configFileData->storageDirectory}";
     Logger::log("Running command: $cmd");
     $cmdOutput = shell_exec($cmd);
     Logger::log("Start command output: " . $cmdOutput);
@@ -101,6 +108,18 @@ class Scripts {
     $cmdOutput = shell_exec($cmd);
     Logger::log("Stop command output: " . $cmdOutput);
     $output['output'] = $cmdOutput;
+    return $output;
+  }
+
+  public function restart() {
+    Logger::log("Restarting storj server.");
+    $output = [];
+    $stopOutput = $this->stop();
+    $output['stopOutput'] = $stopOutput;
+    if ($stopOutput) {
+      $startOutput = $this->start();
+      $output['startOutput'] = $startOutput;
+    }
     return $output;
   }
 

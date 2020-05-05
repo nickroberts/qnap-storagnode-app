@@ -5,5 +5,4 @@ export PATH=$PATH:/share/CACHEDEV1_DATA/.qpkg/container-station/bin
 # Arguments:
 # 1. container name
 
-docker stop ${1} 2>&1
-docker rm -f ${1} 2>&1
+docker exec `docker ps -l -q -f name=^/$1$` sh -c "/app/storagenode version" 2>&1

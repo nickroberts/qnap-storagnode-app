@@ -21,7 +21,7 @@ class ApiResponse {
     if ($this->error) {
       $response["error"] = $this->error;
     }
-    return json_encode($response, JSON_UNESCAPED_SLASHES);
+    return json_encode($response, JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT);
   }
 
   private function setHeaders() {
