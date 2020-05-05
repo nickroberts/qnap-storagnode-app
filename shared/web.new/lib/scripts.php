@@ -139,7 +139,7 @@ class Scripts {
         $output['startOutput'] = $startOutput;
       }
     }
-    Logger::log("Update command output: " . $output);
+    Logger::log("Updated storj server.");
     return $output;
   }
 }
