@@ -1,2 +1,4 @@
+.vscode/settings.json
 volumes
 build
+.DS_Store
