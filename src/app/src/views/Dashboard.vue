@@ -14,35 +14,12 @@
       </v-col>
     </v-row>
 
-    <v-row v-if="!loading">
+    <v-row>
       <v-col cols="12" md="6">
-        <v-card outlined tile class="fill-height">
-          <div class="d-flex justify-start justify-space-between align-start pa-4 fill-height">
-            <StatusCard :status="status" />
-            <div>
-              <div v-if="status.status === 'online'" class="d-flex">
-                <v-btn class="d-block" color="primary" x-large @click="restart()">Restart</v-btn>
-                <v-btn class="d-block ml-4" color="red" outlined x-large @click="stop()">Stop</v-btn>
-              </div>
-              <v-btn v-if="status.status !== 'online'" color="primary" x-large @click="start()">Start</v-btn>
-            </div>
-          </div>
-        </v-card>
+        <StatusCard />
       </v-col>
-
       <v-col cols="12" md="6">
-        <v-card outlined tile class="fill-height">
-          <div class="d-flex justify-start justify-space-between align-start pa-4 fill-height">
-            <VersionCard :status="status" />
-            <div class="d-flex">
-              <v-btn color="primary" large @click="update()">Update Node</v-btn>
-              <v-btn class="ml-4" color="primary" :href="status.statsHost" target="_blank" x-large outlined>
-                <v-icon left dark>open_in_new</v-icon>
-                View Storj Stats
-              </v-btn>
-            </div>
-          </div>
-        </v-card>
+        <VersionCard />
       </v-col>
     </v-row>
 
@@ -93,16 +70,16 @@ export default {
       this.loading = true;
       await api.update();
       await this.getStatus();
-    },
-    async getStatus() {
-      this.loading = true;
-      const response = await api.getStatus();
-      this.status = response;
-      this.loading = false;
     }
+    // async getStatus() {
+    //   this.loading = true;
+    //   const response = await api.getStatus();
+    //   this.status = response;
+    //   this.loading = false;
+    // }
   },
   created() {
-    this.getStatus();
+    // this.getStatus();
   },
   watch: {
     $route: 'getStatus'

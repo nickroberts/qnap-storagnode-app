@@ -58,7 +58,7 @@ export default {
       handler(value) {
         if (value && this.$refs.form) {
           this.$refs.form.resetValidation();
-          this.value = this.data.emailAddress;
+          this.value = this.data.storageAllocation;
         }
       }
     }

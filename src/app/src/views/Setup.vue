@@ -12,65 +12,35 @@
       </v-col>
     </v-row>
 
-    <v-row v-if="loading">
-      <v-col cols="12">
-        <v-card class="pa-4" outlined tile>
-          <v-progress-circular indeterminate color="primary" size="24"></v-progress-circular>
-        </v-card>
+    <v-row>
+      <v-col cols="12" md="6">
+        <StatusCard />
+      </v-col>
+      <v-col cols="12" md="6">
+        <VersionCard />
       </v-col>
     </v-row>
 
-    <v-row v-if="!loading">
-      <v-col cols="12" md="6">
-        <v-card outlined tile class="fill-height">
-          <v-progress-circular v-if="!status" indeterminate color="primary" size="24"></v-progress-circular>
-          <div v-if="status" class="d-flex justify-start justify-space-between align-center pa-4">
-            <StatusCard :status="status" />
-            <div v-if="status.status === 'online'" class="d-flex">
-              <v-btn class="d-block" color="primary" x-large @click="restart()">Restart</v-btn>
-              <v-btn class="d-block ml-4" color="red" outlined x-large @click="stop()">Stop</v-btn>
-            </div>
-            <v-btn v-if="status.status !== 'online'" color="primary" x-large @click="start()">Start</v-btn>
-          </div>
-        </v-card>
-      </v-col>
-
-      <v-col cols="12" md="6">
-        <v-card outlined tile class="fill-height">
-          <v-progress-circular v-if="!status" indeterminate color="primary" size="24"></v-progress-circular>
-          <div v-if="status" class="d-flex justify-start justify-space-between align-center pa-4">
-            <VersionCard :status="status" />
-            <div>
-              <v-btn color="primary" large @click="update()">Update Node</v-btn>
-              <v-btn class="ml-4" color="primary" :href="status.statsHost" target="_blank" x-large outlined>
-                <v-icon left dark>open_in_new</v-icon>
-                View Storj Stats
-              </v-btn>
-            </div>
-          </div>
-        </v-card>
-      </v-col>
-    </v-row>
-
-    <v-row v-if="config">
+    <v-row v-if="configData">
       <v-col cols="12" md="6">
         <ConfigCard
           icon="fingerprint"
           title="Identity"
-          :value="config.identityPath"
+          name="identityPath"
           info="Every node is required to have a unique identifier on the network. If you haven't already, get an authorization token. Please get the authorization token and create identity on host machine other than NAS"
         >
-          <IdentityPathDialog :data="config" :on-save="save" />
+          <IdentityPathDialog :data="configData" :on-save="save" />
         </ConfigCard>
       </v-col>
+
       <v-col cols="12" md="6">
         <ConfigCard
           icon="settings_ethernet"
           title="Port Forwarding"
-          :value="config.hostname"
+          name="hostname"
           info="How a storage node communicates with others on the Storj network, even though it is behind a router. You need a dynamic DNS service to ensure your storage node is connected"
         >
-          <HostnameDialog :data="config" :on-save="save" />
+          <HostnameDialog :data="configData" :on-save="save" />
         </ConfigCard>
       </v-col>
 
@@ -78,21 +48,22 @@
         <ConfigCard
           icon="dns"
           title="Ethereum Wallet Address"
-          :value="config.walletAddress"
+          name="walletAddress"
           info="In order to recieve and hold your STORJ token payouts, you need an ERC-20 compatible wallet address"
         >
-          <WalletAddressDialog :data="config" :on-save="save" />
+          <WalletAddressDialog :data="configData" :on-save="save" />
         </ConfigCard>
       </v-col>
+
       <v-col cols="12" md="6">
         <ConfigCard
           icon="bar_chart"
           title="Storage Allocation"
-          :value="config.storageAllocation"
+          name="storageAllocation"
           append="GB"
           info="How much disk space you want to allocate to the Storj network"
         >
-          <StorageAllocationDialog :data="config" :on-save="save" />
+          <StorageAllocationDialog :data="configData" :on-save="save" />
         </ConfigCard>
       </v-col>
 
@@ -100,20 +71,21 @@
         <ConfigCard
           icon="email"
           title="Email Address"
-          :value="config.emailAddress"
+          name="emailAddress"
           info="Join thousands of Node Operators around the world by getting Node status updates from Storj Labs."
         >
-          <EmailAddressDialog :data="config" :on-save="save" />
+          <EmailAddressDialog :data="configData" :on-save="save" />
         </ConfigCard>
       </v-col>
+
       <v-col cols="12" md="6">
         <ConfigCard
           icon="storage"
           title="Storage Directory"
-          :value="config.storageDirectory"
+          name="storageDirectory"
           info="The local directory where you want files to be stored on your hard drive for the network"
         >
-          <StorageDirectoryDialog :data="config" :on-save="save" />
+          <StorageDirectoryDialog :data="configData" :on-save="save" />
         </ConfigCard>
       </v-col>
     </v-row>
@@ -129,6 +101,7 @@
 </template>
 
 <script>
+import { mapActions, mapState } from 'vuex';
 import * as api from '@/lib/api';
 import StatusCard from '@/components/StatusCard.vue';
 import VersionCard from '@/components/VersionCard.vue';
@@ -156,7 +129,7 @@ export default {
     WalletAddressDialog
   },
   data: () => ({
-    config: null,
+    // config: null,
     latestLog: null,
     loading: false,
     status: null,
@@ -164,6 +137,12 @@ export default {
   }),
   created() {
     this.init();
+  },
+  computed: {
+    ...mapState({
+      configData: state => state.config.data,
+      configLoading: state => state.config.loading
+    })
   },
   methods: {
     async start() {
@@ -186,26 +165,33 @@ export default {
       await api.update();
       await this.init();
     },
-    async getConfig() {
-      this.loading = true;
-      const response = await api.getConfig();
-      this.config = response;
-    },
+    // async getConfig() {
+    //   this.loading = true;
+    //   const response = await api.getConfig();
+    //   this.config = response;
+    // },
     async getStatus() {
       const response = await api.getStatus();
       this.status = response;
     },
     async init() {
-      this.loading = true;
-      await Promise.all(this.getConfig(), this.getStatus());
-      this.loading = false;
+      // try {
+      //   this.loading = true;
+      //   await Promise.all(this.getStatus());
+      //   // await Promise.all(this.getConfig(), this.getStatus());
+      //   this.loading = false;
+      // } catch (e) {
+      //   console.error(e);
+      // }
     },
     async save(configData) {
-      this.loading = true;
-      await api.saveConfig(configData);
-      await this.init();
-      this.loading = false;
-    }
+      await this['config/saveConfig'](configData);
+      // this.loading = true;
+      // await api.saveConfig(configData);
+      // await this.init();
+      // this.loading = false;
+    },
+    ...mapActions(['config/saveConfig'])
   }
 };
 </script>

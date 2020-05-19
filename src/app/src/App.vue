@@ -72,6 +72,8 @@
 </template>
 
 <script>
+import { mapActions, mapState } from 'vuex';
+
 export default {
   name: 'App',
   components: {},
@@ -102,7 +104,19 @@ export default {
       }
     ]
   }),
-  props: {}
+  created: function() {
+    this['config/loadConfig']();
+    this['status/loadStatus']();
+  },
+  props: {},
+  computed: {
+    ...mapState({
+      configData: state => state.config.data
+    })
+  },
+  methods: {
+    ...mapActions(['config/loadConfig', 'config/saveConfig', 'status/loadStatus'])
+  }
 };
 </script>
 

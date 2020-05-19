@@ -42,6 +42,21 @@ class Scripts {
     $cmd = "/bin/bash {$checkScript} {$configFileData->containerName}";
     Logger::log("Running command: $cmd");
     $cmdOutput = shell_exec($cmd);
+    // $cmdOutput = '{
+    //   "Command": "\"docker-php-entrypoint apache2-foreground\"",
+    //   "CreatedAt": "2020-05-18 23:41:19 -0400 EDT",
+    //   "ID": "51a7e3d8d1a1c0a6717b34713b68a89813a4a40de7a4a8511548011c238eb9cd",
+    //   "Image": "php:7.3-apache",
+    //   "Labels": "com.docker.compose.container-number=1,com.docker.compose.oneoff=False,com.docker.compose.project=qnap-storagnode-app,com.docker.compose.project.config_files=docker-compose.yml,com.docker.compose.project.working_dir=/Volumes/Workspace/Workspace/Utropicmedia/Storj/qnap-storagnode-app,com.docker.compose.service=qnap-storagnode-app.php,com.docker.compose.version=1.25.5,com.docker.compose.config-hash=597b5dd915ff90d76d5b2db2d3c8ebb8e0ede2a68401065bfb0702ce2c29c4ea",
+    //   "LocalVolumes": "0",
+    //   "Mounts": "/Volumes/Workspace/Workspace/Utropicmedia/Storj/qnap-storagnode-app/volumes/logs,/Volumes/Workspace/Workspace/Utropicmedia/Storj/qnap-storagnode-app/shared/web.new",
+    //   "Names": "qnap-storagnode-app.php",
+    //   "Networks": "qnap-storagnode-app_qnap-storagnode-app.network",
+    //   "Ports": "0.0.0.0:8000-\u003e80/tcp",
+    //   "RunningFor": "13 hours ago",
+    //   "Size": "0B",
+    //   "Status": "Up 13 hours"
+    // }';
     Logger::log("Check command output: " . $cmdOutput);
 
     $dockerInfo = (array) json_decode($cmdOutput);
@@ -56,7 +71,7 @@ class Scripts {
         $versionScript = $this->versionScript;
         $versionCmd = "/bin/bash {$versionScript} {$configFileData->containerName}";
         $versionOutput = trim(shell_exec($versionCmd));
-        //     $versionOutput = trim("Release build
+//         $versionOutput = trim("Release build
 // Version: v1.1.1
 // Build timestamp: 01 Apr 20 15:19 UTC
 // Git commit: 17923e6fd199e2b33a6ef5853a76f9be68322e79");

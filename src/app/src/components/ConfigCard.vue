@@ -1,7 +1,8 @@
 <template>
   <v-card class="fill-height pa-4" outlined>
     <v-container class="fill-height">
-      <div class="d-flex fill-height align-center">
+      <v-progress-circular v-if="configLoading" indeterminate color="primary" size="24"></v-progress-circular>
+      <div v-if="!configLoading" class="d-flex fill-height align-center">
         <v-icon class="mr-4" color="primary" size="64">{{ $props.icon }}</v-icon>
 
         <div class="d-flex flex-column fill-height">
@@ -22,8 +23,8 @@
           </v-card-title>
 
           <v-card-text>
-            {{ $props.value }}
-            <span v-if="$props.value && $props.append">{{ $props.append }}</span>
+            {{ configData[$props.name] }}
+            <span v-if="configData[$props.name] && $props.append">{{ $props.append }}</span>
           </v-card-text>
 
           <v-spacer></v-spacer>
@@ -36,15 +37,23 @@
 </template>
 
 <script>
+import { mapState } from 'vuex';
+
 export default {
   name: 'ConfigCard',
   components: {},
   props: {
     icon: String,
     title: String,
-    value: String,
+    name: String,
     info: String,
     append: String
+  },
+  computed: {
+    ...mapState({
+      configData: state => state.config.data,
+      configLoading: state => state.config.loading
+    })
   }
 };
 </script>
